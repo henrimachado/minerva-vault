@@ -25,7 +25,7 @@ Aguarde todos os serviços iniciarem. O sistema estará pronto quando você ver 
 
 ## Acessando o Sistema
 ### Interface Principal (Portal)
-- URL: ```http://localhost:XXXX```
+- URL: ```http://localhost:5173```
 - Usuários disponíveis:
     - Administrador
         - Login: 

@@ -1,0 +1,28 @@
+# Instructions 
+INSTRUCTIONS.md
+
+# Python
+__pycache__/
+*.py[cod]
+*.so
+venv/
+.env
+
+# Node
+node_modules/
+dist/
+dist-ssr/
+*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+postgres_data/
