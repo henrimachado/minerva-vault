@@ -1,12 +1,13 @@
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
-from ..service.users_service import UserService
+from ..service import UserService, RoleService
 from modules.users.models import User
 from ..serializer.users_serializer import UserSerializer, UserDetailSerializer
 
 class UserDomain:
     def __init__(self):
         self.service = UserService()
+        self.role_service = RoleService()
         
     def _serialize_user(self, user: User, request=None) -> dict:
         serializer = UserSerializer(
@@ -48,8 +49,21 @@ class UserDomain:
         
         if user.email.lower().split('@')[0] in data['new_password'].lower():
             raise ValidationError("A senha não pode conter o e-mail")
+        
+        if data['new_password'] != data['password_confirmation']:
+            raise ValidationError("A senha e a confirmação de senha devem ser iguais")
     
-    
+    def _validate_new_user_password(self, data: dict) -> None:
+        if data['username'].lower() in data['password'].lower():
+            raise ValidationError("A senha não pode ser igual ao nome de usuário")
+        
+        if data['email'].lower() in data['password'].lower():
+            raise ValidationError("A senha não pode ser igual ao nome de usuário")
+        
+        if data['password'].lower() != data['password_confirmation'].lower():
+            raise ValidationError("A senha e a confirmação de senha devem ser iguais")
+        
+        
     def get_user_by_id(self, user_id: str, request=None, detail=False) -> dict:
         user = self.service.get_user_by_id(user_id)
         serializer_class = UserDetailSerializer if detail else UserSerializer
@@ -62,6 +76,7 @@ class UserDomain:
 
     def update_user(self, requesting_user: User, user_id: str, data: dict, request=None) -> dict:
         user_to_update = self.service.get_user_by_id(user_id)
+        print(user_to_update)
         
         if not self._can_update_user(requesting_user, user_id):
             raise PermissionDenied("Você não tem permissão para atualizar este usuário")
@@ -85,7 +100,15 @@ class UserDomain:
         
         return self._serialize_user(updated_user, request)
 
-    
+    def create_user(self, data: dict) -> dict:
+        self.role_service.get_role_by_id(data['role_id'])
+        self._validate_new_user_password(data)
+        
+        user = self.service.create_user(data)
+        return self._serialize_user(user)
+        
+        
+        
     
         
     

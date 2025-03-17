@@ -2,6 +2,7 @@ import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
+import os
 
 def user_avatar_path(instance, filename):
     return f'avatars/{instance.id}/{filename}'
@@ -26,7 +27,21 @@ class User(AbstractUser):
         super().set_password(raw_password)
     
     def delete_avatar(self):
-      if self.avatar:
-          self.avatar.delete(save=False) 
-          self.avatar = None
-          self.save()
+        if self.avatar:
+            try:
+                file_path = self.avatar.path
+                directory = os.path.dirname(file_path)
+                
+                self.avatar.delete(save=False)
+                self.avatar = None
+                self.save(update_fields=['avatar'])
+                
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+
+                if os.path.exists(directory) and not os.listdir(directory):
+                    os.rmdir(directory)
+                    
+            except Exception as e:
+                print(f"Erro ao deletar avatar: {str(e)}")
+                raise

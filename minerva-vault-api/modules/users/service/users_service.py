@@ -51,3 +51,6 @@ class UserService:
 
     def update_password(self, user: User, new_password: str) -> User:
         return self.repository.update_password(user, new_password)
+
+    def create_user(self, data: dict) -> User:
+        return self.repository.create_user(data)
