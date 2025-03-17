@@ -33,6 +33,13 @@ class UpdateUserValidator(serializers.Serializer):
     )
     
 class ChangePasswordValidator(serializers.Serializer):
+    user_id = serializers.UUIDField(
+        required=True, 
+        error_messages={
+            'required': 'O id do usuário é obrigatório',
+            'invalid': 'O id do usuário deve ser um UUID válido'
+        }
+    )
     current_password = serializers.CharField(
         required=True,
         error_messages={
