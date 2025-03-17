@@ -31,11 +31,19 @@ class UpdateUserValidator(serializers.Serializer):
             'max_length': 'O sobrenome deve ter no máximo 150 caracteres'
         }
     )
-    password = serializers.CharField(
-        required=False,
-        write_only=True,
+    
+class ChangePasswordValidator(serializers.Serializer):
+    current_password = serializers.CharField(
+        required=True,
+        error_messages={
+            'required': 'A senha atual é obrigatória'
+        }
+    )
+    new_password = serializers.CharField(
+        required=True,
         min_length=8,
         error_messages={
+            'required': 'A nova senha é obrigatória',
             'min_length': 'A senha deve ter pelo menos 8 caracteres'
         }
-)
+    )

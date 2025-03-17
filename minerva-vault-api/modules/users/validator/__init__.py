@@ -1,5 +1,3 @@
-from .users_validator import UsersValidator
+from .users_validator import UpdateUserValidator, ChangePasswordValidator
 
-__all__ = [
-    'UsersValidator'   
-]
+__all__ = ['UpdateUserValidator', 'ChangePasswordValidator']

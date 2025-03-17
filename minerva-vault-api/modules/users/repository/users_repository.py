@@ -14,8 +14,10 @@ class UserRepository:
             user.first_name = data['first_name']
         if 'last_name' in data:
             user.last_name = data['last_name']
-        if 'password' in data:
-            user.set_password(data['password'])
-        
+        user.save()
+        return user
+
+    def update_password(self, user: User, new_password: str) -> User:
+        user.set_password(new_password)
         user.save()
         return user

@@ -1,5 +1,5 @@
 from django.core.exceptions import ObjectDoesNotExist
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound
 from ..repository.users_repository import UserRepository
 from ..models.user import User
 
@@ -15,3 +15,9 @@ class UserService:
         
     def update_user(self, user: User, data: dict) -> User:
         return self.repository.update_user(user, data)
+    
+    def check_password(self, user: User, password: str) -> bool:
+        return user.check_password(password)
+    
+    def update_password(self, user: User, new_password: str) -> User:
+        return self.repository.update_password(user, new_password)
