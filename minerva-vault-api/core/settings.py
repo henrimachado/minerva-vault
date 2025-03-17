@@ -1,12 +1,16 @@
 from pathlib import Path
 from datetime import timedelta
+import os
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+STATIC_URL = 'static/'
+
 SECRET_KEY = 'django-insecure-xq23#!9w#4mlm1!2k))u!$onxfij3^#z=(hf$)6b$fyirpa((t'
-
 DEBUG = True
-
 ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
@@ -35,7 +39,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'modules.users.middleware.password_status.PasswordStatusMiddleware',
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -86,6 +89,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+PASSWORD_HISTORY_LIMIT = 5 
+PASSWORD_REUSE_DELAY_DAYS = 90
+
 LANGUAGE_CODE = 'pt-br'
 
 TIME_ZONE = 'America/Sao_Paulo'
@@ -93,8 +99,6 @@ TIME_ZONE = 'America/Sao_Paulo'
 USE_I18N = True
 
 USE_TZ = True
-
-STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 

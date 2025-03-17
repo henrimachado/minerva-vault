@@ -31,6 +31,12 @@ class UpdateUserValidator(serializers.Serializer):
             'max_length': 'O sobrenome deve ter no máximo 150 caracteres'
         }
     )
+    is_active = serializers.BooleanField(
+        required=False,
+        error_messages={
+            'invalid': 'O campo is_active deve ser um booleano'
+        }
+    )
     
 class ChangePasswordValidator(serializers.Serializer):
     user_id = serializers.UUIDField(
@@ -54,3 +60,22 @@ class ChangePasswordValidator(serializers.Serializer):
             'min_length': 'A senha deve ter pelo menos 8 caracteres'
         }
     )
+    
+    def validate_new_password(self, value):
+        if value.isdigit():
+            raise serializers.ValidationError('A senha não pode conter apenas números')
+        
+        if not any (char in "!@#$%^&*(),.?\":{}|" for char in value):
+            raise serializers.ValidationError('A senha deve conter pelo menos um caracter especial')
+        
+        if not any (char.isdigit() for char in value):
+            raise serializers.ValidationError('A senha deve conter pelo menos um número')
+        
+        if not any (char.isupper() for char in value):
+            raise serializers.ValidationError('A senha deve conter pelo menos uma letra maiúscula')
+        
+        if not any (char.islower() for char in value):
+            raise serializers.ValidationError('A senha deve conter pelo menos uma letra minúscula')
+        
+        return value
+    

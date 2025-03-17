@@ -9,6 +9,7 @@ services:
       - "8000:8000"
     volumes:
       - ./minerva-vault-api:/app
+      - media_volume:/app/media
     depends_on:
       - db
     environment:
@@ -43,3 +44,4 @@ services:
 
 volumes:
   postgres_data:
+  media_volume:

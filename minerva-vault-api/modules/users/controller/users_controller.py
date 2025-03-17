@@ -4,8 +4,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework import status
 from rest_framework.exceptions import APIException
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from ..domain.users_domain import UserDomain
 from ..validator.users_validator import UpdateUserValidator, ChangePasswordValidator
+
 
 class UserController(ViewSet):
     permission_classes = [IsAuthenticated]
@@ -16,15 +18,14 @@ class UserController(ViewSet):
 
     @action(detail=False, methods=['get'])
     def me(self, request):
-        result = self.domain.get_user_by_id(request.user.id)
+        result = self.domain.get_user_by_id(request.user.id, request, detail=True)
         return Response(result)
     
-    @action(detail=False, methods=['patch'])
+    @action(detail=False, methods=['patch'], parser_classes=[MultiPartParser, FormParser, JSONParser])
     def update(self, request, pk=None):
         
-        data = dict(request.data) if request.data else {}
-        data['user_id'] = str(pk)
-        
+        data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
+
         validator = UpdateUserValidator(data=data)
         if not validator.is_valid():
             return Response(
@@ -36,12 +37,14 @@ class UserController(ViewSet):
             result = self.domain.update_user(
                 requesting_user=request.user,
                 user_id=str(pk),
-                data=request.data
+                data=validator.validated_data,
+                request=request
             )
             return Response(result)
         except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
             return Response(
-                {'detail': str(e)},
+                {'detail': str(error_message)},
                 status=e.status_code
             )
         except Exception as e:
@@ -50,10 +53,9 @@ class UserController(ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
             
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], parser_classes=[JSONParser])
     def change_password(self, request, pk:None):
-        data = dict(request.data) if request.data else {}
-        data['user_id'] = str(pk)
+        data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
         
         validator = ChangePasswordValidator(data=data)
         
@@ -67,12 +69,14 @@ class UserController(ViewSet):
             result = self.domain.change_password(
                 requesting_user=request.user,
                 user_id= str(pk),
-                data=request.data
+                data=validator.validated_data,
+                request=request
             )
             return Response(result)
         except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
             return Response(
-                {'detail': str(e)},
+                {'detail': str(error_message)},
                 status=e.status_code
             )
         except Exception as e:

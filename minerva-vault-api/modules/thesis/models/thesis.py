@@ -22,6 +22,10 @@ class Thesis(models.Model):
     keywords = models.CharField(max_length=255)
     defense_date = models.DateField()
     pdf_file = models.FileField(upload_to='theses/')
+    pdf_metadata = models.JSONField(null=True) 
+    pdf_size = models.IntegerField(null=True)   
+    pdf_pages = models.IntegerField(null=True)  
+    pdf_uploaded_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(
         max_length=20,
         choices=[
@@ -42,6 +46,12 @@ class Thesis(models.Model):
     class Meta:
         db_table = 'thesis'
         ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['title']),
+            models.Index(fields=['author']),
+            models.Index(fields=['defense_date']),
+            models.Index(fields=['status']),
+        ]
 
     def __str__(self):
         return self.title
