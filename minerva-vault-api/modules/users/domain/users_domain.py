@@ -33,8 +33,6 @@ class UserDomain:
         
     def update_user(self, requesting_user: User, user_id: str, data: dict) -> dict:
         
-        print('chegou aqui')
-        
         user_to_update = self.service.get_user_by_id(user_id)
         
         is_admin = any(role.role.name == 'ADMIN' for role in requesting_user.user_roles.all())

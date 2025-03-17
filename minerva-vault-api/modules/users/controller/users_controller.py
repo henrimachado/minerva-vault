@@ -25,7 +25,6 @@ class UserController(ViewSet):
         data = dict(request.data) if request.data else {}
         data['user_id'] = str(pk)
         
-        print(data)
         validator = UpdateUserValidator(data=data)
         if not validator.is_valid():
             return Response(
