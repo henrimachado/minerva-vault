@@ -54,3 +54,9 @@ class UserRepository:
         )
         
         return user
+    
+    def list_active_users(self, role_id: str) -> list[User]:
+        return User.objects.filter(
+            is_active=True,
+            user_roles__role_id=role_id
+        ).prefetch_related('user_roles__role')

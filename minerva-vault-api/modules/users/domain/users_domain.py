@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from ..service import UserService, RoleService
 from modules.users.models import User
-from ..serializer.users_serializer import UserSerializer, UserDetailSerializer
+from ..serializer.users_serializer import UserSerializer, UserDetailSerializer, UserListSerializer
 
 class UserDomain:
     def __init__(self):
@@ -105,7 +105,18 @@ class UserDomain:
         
         user = self.service.create_user(data)
         return self._serialize_user(user)
+    
+    def list_active_users(self, role_id: str, request=None) -> list[dict]:
+        self.role_service.get_role_by_id(role_id)
         
+        users = self.service.list_active_users(role_id)
+        serializer = UserListSerializer(
+            users,
+            many=True,
+            context={'request': request} if request else {}
+        )
+        print(serializer.data)
+        return serializer.data
         
         
     

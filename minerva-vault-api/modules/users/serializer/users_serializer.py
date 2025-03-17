@@ -72,3 +72,25 @@ class UserDetailSerializer(UserSerializer):
         elif days_until_expiration <= 10:
             return 'WARNING'
         return 'OK'
+    
+class UserListSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    role = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'role']
+        
+    def get_name(self, obj):
+        return f"{obj.first_name} {obj.last_name}".strip()
+    
+    def get_role(self, obj):
+        user_role = obj.user_roles.first()
+        if user_role:
+            return {
+                'id': str(user_role.role.id),
+                'name': user_role.role.name,
+            }
+        return None
+        
+    

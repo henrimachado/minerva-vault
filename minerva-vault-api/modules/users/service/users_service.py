@@ -54,3 +54,6 @@ class UserService:
 
     def create_user(self, data: dict) -> User:
         return self.repository.create_user(data)
+    
+    def list_active_users(self, role_id: str) -> list[User]:
+        return self.repository.list_active_users(role_id)

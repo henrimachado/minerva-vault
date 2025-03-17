@@ -195,3 +195,12 @@ class CreateUserValidator(serializers.Serializer):
     
     def validate_password_confirmation(self, value):
         return validate_password_rules(value)
+    
+class ListUsersValidator(serializers.Serializer):
+    role_id = serializers.UUIDField(
+        required=True,
+        error_messages={
+            'required': 'O id da role é obrigatório',
+            'invalid': 'O id da role deve ser um UUID válido'
+        }
+    )

@@ -6,7 +6,7 @@ from rest_framework import status
 from rest_framework.exceptions import APIException
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from ..domain.users_domain import UserDomain
-from ..validator.users_validator import UpdateUserValidator, ChangePasswordValidator, CreateUserValidator
+from ..validator.users_validator import UpdateUserValidator, ChangePasswordValidator, CreateUserValidator, ListUsersValidator
 
 
 class UserController(ViewSet):
@@ -25,6 +25,69 @@ class UserController(ViewSet):
     def me(self, request):
         result = self.domain.get_user_by_id(request.user.id, request, detail=True)
         return Response(result)
+    
+    @action(detail=False, methods=['get'])
+    def list(self, request):
+        try:
+            print(request.query_params)
+            validator = ListUsersValidator(data=request.query_params)
+            if not validator.is_valid():
+                return Response(
+                    validator.errors, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            result = self.domain.list_active_users(
+                role_id=validator.validated_data.get('role_id'),
+                request=request
+            )
+            return Response(result)
+        except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
+            return Response(
+                {'detail': str(error_message)},
+                status=e.status_code
+            )
+        except Exception as e:
+            return Response(
+                {'detail': 'Erro interno do servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            
+            
+    
+    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser, JSONParser])
+    def create(self, request):
+        
+        data = request.data.copy()
+        
+        if 'avatar' in request.FILES:
+            data['avatar'] = request.FILES['avatar']
+        
+        validator = CreateUserValidator(data=request.data)
+        if not validator.is_valid():
+            return Response(
+                validator.errors, 
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            self.domain.create_user(validator.validated_data)
+            
+            return Response(
+                {'message': 'Usuário criado com sucesso!'}, 
+                status=status.HTTP_201_CREATED
+                )
+        except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
+            return Response(
+                {'detail': str(error_message)},
+                status=e.status_code
+            )
+        except Exception as e:
+            return Response(
+                {'detail': 'Erro interno do servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
     
     @action(detail=False, methods=['patch'], parser_classes=[MultiPartParser, FormParser, JSONParser])
     def update(self, request, pk=None):
@@ -100,36 +163,4 @@ class UserController(ViewSet):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
     
-    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser, JSONParser])
-    def create(self, request):
-        
-        data = request.data.copy()
-        
-        if 'avatar' in request.FILES:
-            data['avatar'] = request.FILES['avatar']
-        
-        validator = CreateUserValidator(data=request.data)
-        if not validator.is_valid():
-            return Response(
-                validator.errors, 
-                status=status.HTTP_400_BAD_REQUEST
-            )
-            
-        try:
-            self.domain.create_user(validator.validated_data)
-            
-            return Response(
-                {'message': 'Usuário criado com sucesso!'}, 
-                status=status.HTTP_201_CREATED
-                )
-        except APIException as e:
-            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
-            return Response(
-                {'detail': str(error_message)},
-                status=e.status_code
-            )
-        except Exception as e:
-            return Response(
-                {'detail': 'Erro interno do servidor'},
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+    
