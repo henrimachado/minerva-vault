@@ -76,7 +76,6 @@ class UserDomain:
 
     def update_user(self, requesting_user: User, user_id: str, data: dict, request=None) -> dict:
         user_to_update = self.service.get_user_by_id(user_id)
-        print(user_to_update)
         
         if not self._can_update_user(requesting_user, user_id):
             raise PermissionDenied("Você não tem permissão para atualizar este usuário")

@@ -7,9 +7,6 @@ class UserRepository:
         return User.objects.prefetch_related('user_roles__role').get(id=user_id)
     
     def update_user(self, user: User, data: dict) -> User:
-        print("Dados recebidos:", data)
-        print("Avatar atual:", user.avatar)
-        
         if data.get('remove_avatar'):
             user.delete_avatar()
         

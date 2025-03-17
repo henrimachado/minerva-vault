@@ -28,8 +28,6 @@ class UserController(ViewSet):
     
     @action(detail=False, methods=['patch'], parser_classes=[MultiPartParser, FormParser, JSONParser])
     def update(self, request, pk=None):
-        print("UPDATE - Tipo do pk:", type(pk))
-        print("UPDATE - Valor do pk:", pk) 
         data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
 
         if 'avatar' in data:
