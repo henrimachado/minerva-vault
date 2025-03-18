@@ -44,6 +44,26 @@ class ThesisController(ViewSet):
             )
         
     @action(detail=False, methods=['get'])
+    def me(self, request):
+        try:
+            result = self.domain.list_my_thesis(
+                user=request.user,
+                request=request
+            )
+            return Response(result, status=status.HTTP_200_OK)
+        except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
+            return Response(
+                {'detail': str(error_message)},
+                status=e.status_code
+            )
+        except Exception as e:
+            return Response(
+                {'detail': 'Erro interno do servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
+    @action(detail=False, methods=['get'])
     def list(self, request):
         validator = ListThesisValidator(data=request.query_params)
         if not validator.is_valid():

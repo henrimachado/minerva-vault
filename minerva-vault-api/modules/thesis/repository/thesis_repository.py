@@ -22,6 +22,28 @@ class ThesisRepository:
             'author', 'advisor', 'co_advisor', 'created_by'
         ).get(id=thesis_id)
         
+    def list_my_thesis(self, user: User, is_student: bool, page: int = 1) -> dict:
+        query = Thesis.objects.select_related(
+            'author', 'advisor', 'co_advisor'
+        )
+        
+        if is_student:
+            query= query.filter(author=user)
+        else:
+            query = query.filter(Q(advisor=user) | Q(co_advisor=user))
+            
+        query = query.order_by('-created_at')
+            
+        paginator = Paginator(query, 10)
+        page_obj = paginator.get_page(page)
+        
+        return {
+            'items': list(page_obj),
+            'total': paginator.count,
+            'pages': paginator.num_pages,
+            'current_page': page
+        }
+        
     def list_thesis(self, filters: dict = None, page: int = 1) -> dict:
         query = Thesis.objects.filter(status = 'APPROVED').select_related(
             'author', 'advisor', 'co_advisor'

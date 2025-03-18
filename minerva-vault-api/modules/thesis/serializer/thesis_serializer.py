@@ -48,5 +48,6 @@ class ThesisListSerializer(serializers.ModelSerializer):
             'defense_date',
             'created_at',
             'abstract',
-            'keywords'
+            'keywords',
+            'status'
         ]

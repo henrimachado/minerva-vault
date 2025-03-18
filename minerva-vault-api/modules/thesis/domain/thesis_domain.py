@@ -32,7 +32,25 @@ class ThesisDomain:
         )
         return serializer.data
     
-    
+    def list_my_thesis(self, user, request=None) -> dict:
+        is_student = any(role.role.name == 'STUDENT' for role in user.user_roles.all())
+        
+        page = int(request.query_params.get('page', 1)) if request else 1
+        result = self.service.list_my_thesis(user, is_student, page)
+        
+        serializer = ThesisListSerializer(
+            result['items'],
+            many=True,
+            context={'request': request} if request else {}
+        )
+        
+        return {
+            'items': serializer.data,
+            'total': result['total'],
+            'pages': result['pages'],
+            'current_page': result['current_page']
+        }
+        
     def list_thesis(self, filters: dict = None, request=None) -> dict:
         page = filters.pop('page', 1) if filters else 1
         
