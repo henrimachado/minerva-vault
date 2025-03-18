@@ -1,11 +1,18 @@
 from ..repository import ThesisRepository
 from modules.users.models import User
+from rest_framework.exceptions import NotFound
 from ..models import Thesis
 from PyPDF2 import PdfReader
 
 class ThesisService:
     def __init__(self):
         self.repository = ThesisRepository()
+        
+    def get_thesis_by_id(self, thesis_id: str) -> Thesis:
+        try:
+            return self.repository.get_thesis_by_id(thesis_id)
+        except Thesis.DoesNotExist:
+            raise NotFound("Tese não encontrada")
     
     def extract_pdf_metadata(self, pdf_file) -> dict:
         reader = PdfReader(pdf_file)
@@ -21,3 +28,11 @@ class ThesisService:
         data['pdf_size'] = pdf_metadata['size']
         data['pdf_pages'] = pdf_metadata['pages']
         return self.repository.create_thesis(data, created_by, status)
+    
+    def update_thesis(self, thesis: Thesis, data:dict) -> Thesis:
+        if 'pdf_file' in data:
+            pdf_metadata = self.extract_pdf_metadata(data['pdf_file'])
+            data['pdf_metadata'] = pdf_metadata
+            data['pdf_size'] = pdf_metadata['size']
+            data['pdf_pages'] = pdf_metadata['pages']
+        return self.repository.update_thesis(thesis, data)

@@ -20,10 +20,18 @@ class ThesisDomain:
     
     def _validate_thesis_author(self, requesting_user, author_id: str):
         user_roles = [role.role.name for role in requesting_user.user_roles.all()]
-        
-        if 'STUDENT' in user_roles and str(requesting_user.id) != author_id:
+
+        if 'STUDENT' in user_roles and str(requesting_user.id) != str(author_id):
             raise ValidationError("Usuário não tem permissão para criar tese em nome de outro estudante")
         
+    def get_thesis_by_id(self, thesis_id: str, request=None) -> dict:
+        thesis = self.service.get_thesis_by_id(thesis_id)
+        serializer = ThesisSerializer(
+            thesis,
+            context={'request': request} if request else {}
+        )
+        return serializer.data
+    
         
     def create_thesis(self, data: dict, user, request=None) -> dict:
         
@@ -52,5 +60,40 @@ class ThesisDomain:
         )
         return serializer.data
     
+    def _can_update_thesis(self, user, thesis) -> bool:
+        user_roles = [role.role.name for role in user.user_roles.all()]
+        
+        if any(role in ['ADMIN', 'PROFESSOR'] for role in user_roles):
+            return True
+        
+        if 'STUDENT' in user_roles:
+            return str(thesis.author.id) == str(user.id) and thesis.status == 'PENDING'
+        
+        return False
+    
+    def _validate_update_data(self, user, data: dict) -> None:
+        user_roles = [role.role.name for role in user.user_roles.all()]
+        
+        if ('STUDENT' in user_roles and not any(role in ['ADMIN', 'PROFESSOR'] for role in user_roles)
+        and 'status' in data):
+            raise ValidationError("Usuário não tem permissão para alterar o status da tese")
+        
+    def update_thesis(self, thesis_id: str, data: dict, user, request= None) -> dict:
+        thesis = self.service.get_thesis_by_id(thesis_id)
+        
+        if not self._can_update_thesis(user, thesis):
+            raise ValidationError("Usuário não tem permissão para alterar a tese")
+        
+        self._validate_update_data(user, data)
+        
+        thesis = self.service.update_thesis(thesis, data)
+         
+        serializer = ThesisSerializer(
+            thesis,
+            context={'request': request} if request else {}
+        )
+        return serializer.data
+            
+        
     
         
