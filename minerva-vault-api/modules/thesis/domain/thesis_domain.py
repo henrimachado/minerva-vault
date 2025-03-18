@@ -1,7 +1,7 @@
 from ..service import ThesisService
 from modules.users.service import UserService
 from rest_framework.exceptions import ValidationError
-from ..serializer import ThesisSerializer
+from ..serializer import ThesisSerializer, ThesisListSerializer
 
 class ThesisDomain:
     def __init__(self):
@@ -32,6 +32,25 @@ class ThesisDomain:
         )
         return serializer.data
     
+    
+    def list_thesis(self, filters: dict = None, request=None) -> dict:
+        page = filters.pop('page', 1) if filters else 1
+        
+        result = self.service.list_thesis(filters, page)
+
+        
+        serializer = ThesisListSerializer(
+            result['items'],
+            many=True,
+            context={'request': request} if request else {}
+        )
+
+        return {
+            'items': serializer.data,
+            'total': result['total'],
+            'pages': result['pages'],
+            'current_page': result['current_page']
+        }
         
     def create_thesis(self, data: dict, user, request=None) -> dict:
         

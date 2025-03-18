@@ -1,3 +1,3 @@
-from .thesis_serializer import ThesisSerializer
+from .thesis_serializer import ThesisSerializer, ThesisListSerializer
 
-__all__ = ['ThesisSerializer']
+__all__ = ['ThesisSerializer', 'ThesisListSerializer']

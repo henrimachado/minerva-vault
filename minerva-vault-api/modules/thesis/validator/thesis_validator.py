@@ -182,3 +182,80 @@ class UpdateThesisValidator(serializers.Serializer):
                 'O arquivo deve estar no formato PDF'
             )
         return value
+    
+    
+class ListThesisValidator(serializers.Serializer):
+    title = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        min_length=3,
+        error_messages={
+            'blank': 'O título não pode estar em branco',
+            'min_length': 'O título deve ter pelo menos 3 caracteres'
+        }
+    )
+    author_name = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        min_length=3,
+        error_messages={
+            'blank': 'O nome do autor não pode estar em branco',
+            'min_length': 'O nome do autor deve ter pelo menos 3 caracteres'
+        }
+    )
+    
+    advisor_name = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        min_length=3,
+        error_messages={
+            'blank': 'O nome do orientador não pode estar em branco',
+            'min_length': 'O nome do orientador deve ter pelo menos 3 caracteres'
+        }
+    )
+    
+    co_advisor_name = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        min_length=3,
+        error_messages={
+            'blank': 'O nome do coorientador não pode estar em branco',
+            'min_length': 'O nome do coorientador deve ter pelo menos 3 caracteres'
+        }
+    )
+    
+    defense_date = serializers.DateField(
+        required=False,
+        error_messages={
+            'invalid': 'A data de defesa deve ser válida'
+        }
+    )
+    
+    context = serializers.CharField(
+        required=False,
+        allow_blank=False,
+        min_length=3,
+        error_messages={
+            'blank': 'O contexto não pode estar em branco',
+            'min_length': 'O contexto deve ter pelo menos 3 caracteres'
+        }
+    )
+    
+    order_by = serializers.ChoiceField(
+        required=False,
+        choices=[
+            'BYAUTHORDESC',
+            'BYAUTHORASC',
+            'BYADVISERDESC',
+            'BYADVISERASC',
+            'BYDEFENSEDATEDESC',
+            'BYDEFENSEDATEASC',
+            'BYTITLEASC',
+            'BYTITLEDESC'
+        ]
+    )
+    page = serializers.IntegerField(
+        required=False,
+        min_value=1,
+        default=1,
+    )

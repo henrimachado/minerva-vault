@@ -13,6 +13,9 @@ class ThesisService:
             return self.repository.get_thesis_by_id(thesis_id)
         except Thesis.DoesNotExist:
             raise NotFound("Tese não encontrada")
+        
+    def list_thesis(self, filters:dict = None, page: int = 1) -> dict:
+        return self.repository.list_thesis(filters, page)
     
     def extract_pdf_metadata(self, pdf_file) -> dict:
         reader = PdfReader(pdf_file)

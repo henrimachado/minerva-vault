@@ -29,7 +29,6 @@ class UserController(ViewSet):
     @action(detail=False, methods=['get'])
     def list(self, request):
         try:
-            print(request.query_params)
             validator = ListUsersValidator(data=request.query_params)
             if not validator.is_valid():
                 return Response(

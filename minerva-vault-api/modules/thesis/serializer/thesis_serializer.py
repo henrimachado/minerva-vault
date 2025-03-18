@@ -30,3 +30,23 @@ class ThesisSerializer(serializers.ModelSerializer):
             'updated_at',
             
         ]
+        
+        
+class ThesisListSerializer(serializers.ModelSerializer):
+    author = UserListSerializer()
+    advisor = UserListSerializer()
+    co_advisor = UserListSerializer()
+
+    class Meta:
+        model = Thesis
+        fields = [
+            'id',
+            'title',
+            'author',
+            'advisor',
+            'co_advisor',
+            'defense_date',
+            'created_at',
+            'abstract',
+            'keywords'
+        ]

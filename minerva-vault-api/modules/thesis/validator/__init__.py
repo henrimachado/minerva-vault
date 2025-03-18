@@ -1,3 +1,3 @@
-from .thesis_validator import CreateThesisValidator, UpdateThesisValidator, GetThesisValidator
+from .thesis_validator import CreateThesisValidator, UpdateThesisValidator, GetThesisValidator, ListThesisValidator
 
-__all__ = ['CreateThesisValidator', 'UpdateThesisValidator', 'GetThesisValidator']
+__all__ = ['CreateThesisValidator', 'UpdateThesisValidator', 'GetThesisValidator', 'ListThesisValidator']
