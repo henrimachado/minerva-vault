@@ -5,7 +5,11 @@ from modules.users.models import User
 class Thesis(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
-    author = models.CharField(max_length=255)
+    author = models.ForeignKey(
+        User, 
+        on_delete=models.PROTECT,
+        related_name='authored_theses'
+    )
     advisor = models.ForeignKey(
         User, 
         on_delete=models.PROTECT,

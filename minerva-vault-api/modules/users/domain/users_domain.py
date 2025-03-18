@@ -2,7 +2,7 @@ from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from ..service import UserService, RoleService
 from modules.users.models import User
-from ..serializer.users_serializer import UserSerializer, UserDetailSerializer, UserListSerializer
+from ..serializer import UserSerializer, UserDetailSerializer, UserListSerializer
 
 class UserDomain:
     def __init__(self):
