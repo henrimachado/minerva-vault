@@ -115,7 +115,6 @@ class UserDomain:
             many=True,
             context={'request': request} if request else {}
         )
-        print(serializer.data)
         return serializer.data
         
         
