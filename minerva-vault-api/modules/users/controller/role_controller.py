@@ -43,7 +43,7 @@ class RoleController(ViewSet):
         },
         tags=['Tipos de Usuário']
     )
-    @audit_log(action='GET', module='ROLES', table_name='user_roles')
+    @audit_log(action='GET', module='USERS', table_name='user_roles')
     def list(self, request): 
         result = self.domain.get_user_roles()
         return Response(result)

@@ -63,7 +63,7 @@ class AuthController(ViewSet):
         tags=['Autenticação']
     )
     @audit_log(action='LOGIN', module='AUTH', table_name='auth')
-    @action(detail=False, methods=['post'])
+    @action(detail=False, methods=['post'], url_path='login')
     def login(self, request):
         validator = LoginValidator(data=request.data)
         if not validator.is_valid():

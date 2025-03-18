@@ -83,8 +83,7 @@ class ThesisController(ViewSet):
         tags=['Teses']
     )
     @audit_log(action='GET', module='THESIS', table_name='thesis')
-    @action(detail=True, methods=['get'])
-    def get(self, request, pk:None):
+    def retrieve(self, request, pk:None):
         validator = GetThesisValidator(data={'thesis_id': str(pk)})  
             
         if not validator.is_valid():
@@ -233,7 +232,6 @@ class ThesisController(ViewSet):
         tags=['Teses']
     )
     @audit_log(action='GET', module='THESIS', table_name='thesis')
-    @action(detail=False, methods=['get'])
     def list(self, request):
         validator = ListThesisValidator(data=request.query_params)
         if not validator.is_valid():
@@ -303,7 +301,6 @@ class ThesisController(ViewSet):
         tags=['Teses']
     )
     @audit_log(action='POST', module='THESIS', table_name='thesis')   
-    @action(detail=False, methods=['post'])
     def create(self, request):
         try:
             
@@ -383,8 +380,7 @@ class ThesisController(ViewSet):
         tags=['Teses']
     )
     @audit_log(action='PATCH', module='THESIS', table_name='thesis')       
-    @action(detail=True, methods=['patch'])
-    def update(self, request, pk:None):
+    def partial_update(self, request, pk:None):
         data = dict(request.data)
         for key in data:
             if isinstance(data[key], list):
@@ -444,8 +440,7 @@ class ThesisController(ViewSet):
         tags=['Teses']
     )
     @audit_log(action='DELETE', module='THESIS', table_name='thesis')       
-    @action(detail=True, methods=['delete'])
-    def delete(self, request, pk:None):
+    def destroy(self, request, pk:None):
         try:
             validator = DeleteThesisValidator(data={'thesis_id': str(pk)})
             if not validator.is_valid():

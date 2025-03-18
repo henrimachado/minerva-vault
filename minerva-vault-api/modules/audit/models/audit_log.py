@@ -8,16 +8,13 @@ class AuditLog(models.Model):
     action = models.CharField(
         max_length=30,
         choices=[
-            ('CREATE', 'Create'),
-            ('UPDATE', 'Update'),
+            ('GET', 'Get'),
+            ('POST', 'Post'),
+            ('PUT', 'Put'),
+            ('PATCH', 'Patch'),
             ('DELETE', 'Delete'),
-            ('VIEW', 'View'),
-            ('DOWNLOAD', 'Download'),  
-            ('UPLOAD', 'Upload'),      
-            ('LOGIN', 'Login'),        
-            ('LOGOUT', 'Logout'),      
-            ('PASSWORD_CHANGE', 'Password Change'),
-            ('PERMISSION_CHANGE', 'Permission Change')
+            ('LOGIN', 'Login'),
+            ('PASSWORD_CHANGE', 'Password Change')
     ]
     )
     
@@ -25,7 +22,7 @@ class AuditLog(models.Model):
         max_length=30,
         choices=[
             ('THESIS', 'Thesis'),
-            ('USER', 'User'),
+            ('USERS', 'Users'),
             ('AUTH', 'Authentication'),
         ]
     )

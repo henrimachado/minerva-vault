@@ -1,6 +1,7 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 from ..controller import AuthController
 
-urlpatterns = [
-    path('login', AuthController.as_view({'post': 'login'})),
-]
+router = DefaultRouter()
+router.register('', AuthController, basename='auth')
+
+urlpatterns = router.urls

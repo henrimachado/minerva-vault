@@ -1,12 +1,12 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 from ..controller import UserController, RoleController
 
+# Cria o router
+router = DefaultRouter()
 
-urlpatterns = [
-    path('me', UserController.as_view({'get': 'me'})),
-    path('', UserController.as_view({'get': 'list'})),
-    path('roles', RoleController.as_view({'get': 'list'})),
-    path('', UserController.as_view({'post': 'create'})),
-    path('<uuid:pk>', UserController.as_view({'patch': 'update'})),
-    path('<uuid:pk>/change-password', UserController.as_view({'post': 'change_password'})),
-] 
+# Registra os ViewSets - ordem importa!
+router.register('roles', RoleController, basename='roles')  
+router.register('', UserController, basename='users')       
+
+urlpatterns = router.urls

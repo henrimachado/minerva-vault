@@ -1,6 +1,7 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework import status
 from rest_framework.exceptions import APIException
@@ -19,6 +20,9 @@ class UserController(ViewSet):
         self.domain = UserDomain()
         
     def get_permissions(self):
+        print(f"Current action: {self.action}")  # Debug
+        print(f"Current method: {self.request.method}")  # Debug
+        print(f"Current path: {self.request.path}")  # Debug
         if self.action == 'create':
             return [AllowAny()]
         return super().get_permissions()
@@ -103,7 +107,6 @@ class UserController(ViewSet):
         tags=['Usuários']
     )
     @audit_log(action='GET', module='USERS', table_name='users')
-    @action(detail=False, methods=['get'])
     def list(self, request):
         try:
             validator = ListUsersValidator(data=request.query_params)
@@ -195,7 +198,6 @@ class UserController(ViewSet):
         tags=['Usuários']
     )       
     @audit_log(action='POST', module='USERS', table_name='users')
-    @action(detail=False, methods=['post'], parser_classes=[MultiPartParser, FormParser, JSONParser])
     def create(self, request):
         
         data = request.data.copy()
@@ -278,8 +280,7 @@ class UserController(ViewSet):
         tags=['Usuários']
     )
     @audit_log(action='PATCH', module='USERS', table_name='users')
-    @action(detail=False, methods=['patch'], parser_classes=[MultiPartParser, FormParser, JSONParser])
-    def update(self, request, pk=None):
+    def partial_update(self, request, pk=None):
         data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
 
         if 'avatar' in data:
