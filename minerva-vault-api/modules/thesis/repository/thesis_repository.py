@@ -3,6 +3,7 @@ from modules.users.models import User
 from django.db import transaction
 from django.core.paginator import Paginator
 from django.db.models import Q
+import os
 
 class ThesisRepository:
     
@@ -130,3 +131,5 @@ class ThesisRepository:
         thesis.save()
         return thesis
 
+    def delete_thesis(self, thesis: Thesis):
+        thesis.delete()

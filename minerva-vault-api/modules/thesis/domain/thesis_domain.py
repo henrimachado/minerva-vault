@@ -1,7 +1,8 @@
 from ..service import ThesisService
 from modules.users.service import UserService
-from rest_framework.exceptions import ValidationError
+from rest_framework.exceptions import ValidationError, PermissionDenied
 from ..serializer import ThesisSerializer, ThesisListSerializer
+from modules.users.models import User
 
 class ThesisDomain:
     def __init__(self):
@@ -131,6 +132,37 @@ class ThesisDomain:
         )
         return serializer.data
             
+    def delete_thesis(self, thesis_id: str, user: User) -> None:
+        print(user)
+        print(thesis_id)
+        thesis = self.service.get_thesis_by_id(thesis_id)
         
+        user_roles = [role.role.name for role in user.user_roles.all()]
+        
+        is_admin = 'ADMIN' in user_roles
+        is_professor = 'PROFESSOR' in user_roles
+        is_student = 'STUDENT' in user_roles
+        
+        
+        if is_admin:
+            self.service.delete_thesis(thesis)
+            return
+        
+        if is_professor:
+            if thesis.advisor.id != user.id:
+                raise PermissionDenied("Professores não podem deletar teses que não são de sua orientação")
+            self.service.delete_thesis(thesis)
+            return
+        
+        if is_student:
+            if thesis.author.id != user.id:
+                raise PermissionDenied("Estudantes não podem deletar teses que não são de sua autoria")
+            if thesis.status != 'PENDING':
+                raise PermissionDenied("Estudantes não podem deletar teses que não estão pendentes")
+            self.service.delete_thesis(thesis)
+            return
+        
+        raise PermissionDenied("Usuário não tem permissão para deletar a tese")
+            
     
         

@@ -42,3 +42,6 @@ class ThesisService:
             data['pdf_size'] = pdf_metadata['size']
             data['pdf_pages'] = pdf_metadata['pages']
         return self.repository.update_thesis(thesis, data)
+    
+    def delete_thesis(self, thesis: Thesis):
+        return self.repository.delete_thesis(thesis)

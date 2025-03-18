@@ -1,6 +1,7 @@
 import uuid
 from django.db import models
 from modules.users.models import User
+import os
 
 class Thesis(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -59,3 +60,23 @@ class Thesis(models.Model):
 
     def __str__(self):
         return self.title
+    
+    def delete_pdf(self):
+        if self.pdf_file:
+            try:
+                file_path = self.pdf_file.path
+                directory = os.path.dirname(file_path)
+                
+                self.pdf_file.delete(save=False)
+                self.pdf_file
+                self.save(update_fields=['pdf_file'])
+                
+                if os.path.exists(directory) and not os.listdir(directory):
+                        os.rmdir(directory)
+            except Exception as e:
+                print(f"Erro ao deletar arquivo PDF: {str(e)}")
+                raise
+            
+    def delete(self, *args, **kwargs):
+        self.delete_pdf()
+        super().delete(*args, **kwargs)

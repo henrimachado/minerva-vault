@@ -259,3 +259,13 @@ class ListThesisValidator(serializers.Serializer):
         min_value=1,
         default=1,
     )
+    
+    
+class DeleteThesisValidator(serializers.Serializer):
+    thesis_id = serializers.UUIDField(
+        required=True,
+        error_messages={
+            'required': 'O ID da tese é obrigatório',
+            'invalid': 'O ID da tese deve ser um UUID válido'
+        }
+    )

@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
 from rest_framework.exceptions import APIException
-from ..validator import CreateThesisValidator, UpdateThesisValidator, GetThesisValidator, ListThesisValidator
+from ..validator import CreateThesisValidator, UpdateThesisValidator, GetThesisValidator, ListThesisValidator, DeleteThesisValidator
 from ..domain import ThesisDomain
 
 class ThesisController(ViewSet):
@@ -142,6 +142,32 @@ class ThesisController(ViewSet):
             )
             
             return Response(result, status=status.HTTP_200_OK)
+        except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
+            return Response(
+                {'detail': str(error_message)},
+                status=e.status_code
+            )
+        except Exception as e:
+            return Response(
+                {'detail': 'Erro interno do servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+            
+    @action(detail=True, methods=['delete'])
+    def delete(self, request, pk:None):
+        try:
+            validator = DeleteThesisValidator(data={'thesis_id': str(pk)})
+            if not validator.is_valid():
+                return Response(
+                    validator.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            self.domain.delete_thesis(
+                thesis_id=pk,
+                user=request.user,
+            )
+            return Response(status=status.HTTP_204_NO_CONTENT)
         except APIException as e:
             error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
             return Response(
