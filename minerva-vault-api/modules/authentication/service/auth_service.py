@@ -10,6 +10,8 @@ class AuthService:
         user = self.repository.authenticate_user(username, password)
         
         if not user or not user.is_active:
-            raise AuthenticationFailed('Credenciais inválidas')
+            raise AuthenticationFailed('Credenciais inválidas. Em caso de dúvidas, busque o suporte.')
             
         return user
+    
+    

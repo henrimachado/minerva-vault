@@ -26,3 +26,4 @@ class AuthDomain:
                 'is_staff': user.is_staff
             }
         }
+        

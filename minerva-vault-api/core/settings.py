@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     'modules.thesis',
     'modules.audit',
     'modules.authentication',
+    'drf_yasg',
 ]
 
 AUTH_USER_MODEL = 'users.User'
@@ -144,5 +145,6 @@ SIMPLE_JWT = {
 'TOKEN_TYPE_CLAIM': 'token_type',
 
 'JTI_CLAIM': 'jti',
+
 }
 

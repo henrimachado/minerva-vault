@@ -101,8 +101,11 @@ class ThesisDomain:
     def _can_update_thesis(self, user, thesis) -> bool:
         user_roles = [role.role.name for role in user.user_roles.all()]
         
-        if any(role in ['ADMIN', 'PROFESSOR'] for role in user_roles):
+        if 'ADMIN' in user_roles:
             return True
+        
+        if 'PROFESSOR' in user_roles:
+            return thesis.advisor.id == user.id
         
         if 'STUDENT' in user_roles:
             return str(thesis.author.id) == str(user.id) and thesis.status == 'PENDING'
