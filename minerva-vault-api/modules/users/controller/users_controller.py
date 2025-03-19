@@ -20,9 +20,6 @@ class UserController(ViewSet):
         self.domain = UserDomain()
         
     def get_permissions(self):
-        print(f"Current action: {self.action}")  # Debug
-        print(f"Current method: {self.request.method}")  # Debug
-        print(f"Current path: {self.request.path}")  # Debug
         if self.action == 'create':
             return [AllowAny()]
         return super().get_permissions()

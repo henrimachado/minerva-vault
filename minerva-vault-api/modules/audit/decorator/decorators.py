@@ -19,7 +19,6 @@ def sanitize_data(data):
         return None
     
     if isinstance(data, dict):
-        # Remove campos sensíveis
         sensitive_fields = {'password', 'current_password', 'new_password', 'password_confirmation'}
         return {
             key: sanitize_data(value)
@@ -40,21 +39,16 @@ def audit_log(action, module, table_name):
         @wraps(func)
         def wrapper(self, request, *args, **kwargs):
             try:
-                # Executa a função original
                 response = func(self, request, *args, **kwargs)
 
-                # Prepara os dados para o log
                 try:
-                    # Verifica se o usuário está autenticado
                     user = request.user if request.user.is_authenticated else None
                     
-                    # Para login bem-sucedido, pega o usuário da resposta
                     if action == 'LOGIN' and response.status_code in [200, 201]:
                         if hasattr(response, 'data') and 'user' in response.data:
                             from modules.users.models import User
                             user = User.objects.get(id=response.data['user']['id'])
 
-                    # Se não houver usuário autenticado e não for login, não cria log
                     if not user and action != 'LOGIN':
                         return response
 
@@ -62,7 +56,6 @@ def audit_log(action, module, table_name):
                     if hasattr(response, 'data'):
                         new_data = sanitize_data(response.data)
 
-                    # Determina o record_id
                     if action == 'LOGIN':
                         record_id = str(user.id) if user else str(uuid.uuid4())
                     else:
@@ -72,7 +65,6 @@ def audit_log(action, module, table_name):
                         if not record_id:
                             record_id = str(uuid.uuid4())
 
-                    # Cria o log apenas se tiver um usuário válido
                     if user:
                         from ..models import AuditLog
                         AuditLog.objects.create(
@@ -94,11 +86,9 @@ def audit_log(action, module, table_name):
                 return response
 
             except Exception as e:
-                # Log em caso de erro
                 try:
                     user = request.user if request.user.is_authenticated else None
                     
-                    # Se tiver um usuário válido, cria o log de erro
                     if user:
                         from ..models import AuditLog
                         AuditLog.objects.create(
