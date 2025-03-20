@@ -1,16 +1,20 @@
-from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework import status
-from rest_framework.exceptions import APIException
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from ..domain.users_domain import UserDomain
-from ..validator.users_validator import UpdateUserValidator, ChangePasswordValidator, CreateUserValidator, ListUsersValidator
-from modules.audit.decorator import audit_log
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
+from rest_framework.decorators import action, permission_classes
+from rest_framework.exceptions import APIException
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+from modules.audit.decorator import audit_log
+from ..domain.users_domain import UserDomain
+from ..validator.users_validator import (
+    ChangePasswordValidator,
+    CreateUserValidator,
+    ListUsersValidator,
+    UpdateUserValidator
+)
 
 class UserController(ViewSet):
     permission_classes = [IsAuthenticated]

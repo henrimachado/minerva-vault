@@ -1,5 +1,5 @@
-from ..models import Role
 import uuid
+from ..models import Role
 from ..serializer import RoleListSerializer
 
 class RoleRepository:

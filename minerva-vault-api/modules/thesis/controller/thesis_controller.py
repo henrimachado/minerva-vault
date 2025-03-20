@@ -1,15 +1,22 @@
-from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
-from rest_framework.exceptions import APIException
-from ..validator import CreateThesisValidator, UpdateThesisValidator, GetThesisValidator, ListThesisValidator, DeleteThesisValidator
-from ..domain import ThesisDomain
-from modules.audit.decorator import audit_log
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.exceptions import APIException
+from rest_framework.parsers import MultiPartParser, FormParser, JSONParser
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+
+from ..domain import ThesisDomain
+from ..validator import (
+    CreateThesisValidator, 
+    DeleteThesisValidator,
+    GetThesisValidator, 
+    ListThesisValidator, 
+    UpdateThesisValidator
+)
+from modules.audit.decorator import audit_log
 
 class ThesisController(ViewSet):
     permission_classes = [IsAuthenticated]
@@ -18,6 +25,11 @@ class ThesisController(ViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.domain = ThesisDomain()
+        
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            return [AllowAny()]
+        return super().get_permissions()
     
     @swagger_auto_schema(
         operation_summary="Obtém uma tese específica",
@@ -76,10 +88,10 @@ class ThesisController(ViewSet):
                 )
             ),
             400: "Requisição inválida",
-            401: "Não autorizado",
             404: "Tese não encontrada",
             500: "Erro interno do servidor"
         },
+        security=[],
         tags=['Teses']
     )
     @audit_log(action='GET', module='THESIS', table_name='thesis')
@@ -226,9 +238,9 @@ class ThesisController(ViewSet):
                 )
             ),
             400: "Parâmetros inválidos",
-            401: "Não autorizado",
             500: "Erro interno do servidor"
         },
+        security=[],
         tags=['Teses']
     )
     @audit_log(action='GET', module='THESIS', table_name='thesis')

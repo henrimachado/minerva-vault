@@ -1,11 +1,11 @@
-from rest_framework.viewsets import ViewSet
-from rest_framework.decorators import action
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from ..domain import RoleDomain
-from modules.audit.decorator import audit_log
-from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from drf_yasg.utils import swagger_auto_schema
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet
+from modules.audit.decorator import audit_log
+from ..domain import RoleDomain
 
 
 class RoleController(ViewSet):

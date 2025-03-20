@@ -1,9 +1,9 @@
+import os
+from django.core.paginator import Paginator
+from django.db import transaction
+from django.db.models import Q
 from ..models import Thesis
 from modules.users.models import User
-from django.db import transaction
-from django.core.paginator import Paginator
-from django.db.models import Q
-import os
 
 class ThesisRepository:
     
@@ -50,6 +50,7 @@ class ThesisRepository:
             'author', 'advisor', 'co_advisor'
         )
         
+        print(query)
         
         if filters:
             if filters.get('title'):

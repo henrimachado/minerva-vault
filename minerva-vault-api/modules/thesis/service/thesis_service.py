@@ -1,8 +1,8 @@
-from ..repository import ThesisRepository
-from modules.users.models import User
+from PyPDF2 import PdfReader
 from rest_framework.exceptions import NotFound
 from ..models import Thesis
-from PyPDF2 import PdfReader
+from ..repository import ThesisRepository
+from modules.users.models import User
 
 class ThesisService:
     def __init__(self):

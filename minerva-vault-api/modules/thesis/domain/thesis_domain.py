@@ -1,8 +1,8 @@
-from ..service import ThesisService
-from modules.users.service import UserService
 from rest_framework.exceptions import ValidationError, PermissionDenied
 from ..serializer import ThesisSerializer, ThesisListSerializer
+from ..service import ThesisService
 from modules.users.models import User
+from modules.users.service import UserService
 
 class ThesisDomain:
     def __init__(self):

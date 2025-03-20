@@ -1,12 +1,12 @@
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
+from rest_framework.decorators import action
 from ..validator.auth_validator import LoginValidator
 from ..domain.auth_domain import AuthDomain
-from rest_framework.decorators import action
 from modules.audit.decorator import audit_log
-from drf_yasg.utils import swagger_auto_schema
-from drf_yasg import openapi
 
 class AuthController(ViewSet):
     authentication_classes = []  

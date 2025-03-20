@@ -1,6 +1,5 @@
-from ..service.auth_service import AuthService
 from rest_framework_simplejwt.tokens import RefreshToken
-from modules.users.models import User
+from ..service.auth_service import AuthService
 
 class AuthDomain:
     def __init__(self):

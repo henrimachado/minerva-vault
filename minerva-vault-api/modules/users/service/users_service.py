@@ -1,6 +1,6 @@
+from rest_framework.exceptions import NotFound
 from django.contrib.auth.hashers import check_password, make_password
 from django.conf import settings
-from rest_framework.exceptions import NotFound
 from ..repository.users_repository import UserRepository
 from ..models import User, PasswordHistory
 

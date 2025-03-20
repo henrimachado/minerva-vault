@@ -1,6 +1,6 @@
+from django.db import transaction
 from ..models.user import User
 from ..models.user_role import UserRole
-from django.db import transaction
 
 class UserRepository:
     def get_user_by_id(self, user_id: str) -> User: 

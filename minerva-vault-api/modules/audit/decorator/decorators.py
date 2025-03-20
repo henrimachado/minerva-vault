@@ -1,8 +1,8 @@
-from functools import wraps
 import uuid
-from datetime import datetime
 from django.core.files import File
 from django.core.serializers.json import DjangoJSONEncoder
+from functools import wraps
+from datetime import datetime
 
 class AuditJSONEncoder(DjangoJSONEncoder):
     def default(self, obj):

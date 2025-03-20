@@ -1,8 +1,8 @@
+import os
 import uuid
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils import timezone
-import os
 
 def user_avatar_path(instance, filename):
     return f'avatars/{instance.id}/{filename}'

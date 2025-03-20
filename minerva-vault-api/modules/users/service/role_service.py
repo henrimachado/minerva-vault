@@ -1,7 +1,7 @@
+import uuid
+from rest_framework.exceptions import NotFound
 from ..repository import RoleRepository
 from ..models import Role
-from rest_framework.exceptions import NotFound
-import uuid
 
 
 class RoleService:
