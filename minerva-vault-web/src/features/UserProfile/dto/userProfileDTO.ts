@@ -34,3 +34,8 @@ export interface CreateUser {
     avatar?: File | null;
 }
 
+export interface UpdateUserProfileDTO {
+    first_name?: string;
+    last_name?: string;
+    avatar?: File | null;
+}

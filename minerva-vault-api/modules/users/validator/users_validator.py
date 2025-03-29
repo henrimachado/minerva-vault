@@ -57,11 +57,13 @@ class UpdateUserValidator(serializers.Serializer):
     avatar = serializers.ImageField(
         required=False,
         allow_null=True,
-        allow_empty_file=True,
+        allow_empty_file=False,
         error_messages={
             'invalid': 'O avatar deve ser uma imagem válida'
         }
     )
+    
+    
     remove_avatar = serializers.BooleanField(required=False)
     
     def validate_avatar(self, value):

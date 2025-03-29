@@ -213,6 +213,7 @@ class UserController(ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
             
+        
         try:
             self.domain.create_user(validator.validated_data)
             
@@ -285,16 +286,16 @@ class UserController(ViewSet):
     def partial_update(self, request, pk=None):
         data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
 
-        if 'avatar' in data:
+        if 'avatar' in request.FILES:
+            data['avatar'] = request.FILES['avatar']
+        elif 'avatar' in data:
             avatar_value = data['avatar']
             if isinstance(avatar_value, list):
                 avatar_value = avatar_value[0]
-                
+        
             if avatar_value == 'null' or avatar_value == '':
                 data['remove_avatar'] = True
                 data.pop('avatar')
-        elif 'avatar' in request.FILES:
-            data['avatar'] = request.FILES['avatar']
     
         validator = UpdateUserValidator(data=data)
         

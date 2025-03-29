@@ -47,7 +47,7 @@ const userRoleEnum: Record<string, string> = {
 
 function SignUp() {
     const navigate = useNavigate();
-    const { getUserRoles } = UserController();
+    const { getUserRoles, createUser } = UserController();
     const [loading, setLoading] = useState(false);
     const [roles, setRoles] = useState<UserRole[]>([]);
     const [rolesLoading, setRolesLoading] = useState(false);
@@ -121,6 +121,11 @@ function SignUp() {
         e.stopPropagation();
         setAvatarPreview(null);
         setFormData({ ...formData, avatar: null });
+
+        const fileInput = document.getElementById('avatar-upload') as HTMLInputElement;
+        if (fileInput) {
+            fileInput.value = '';
+        }
     };
 
     const validateForm = (): boolean => {
@@ -169,8 +174,11 @@ function SignUp() {
         setErrors({});
 
         try {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            navigate('/signin');
+            const isSuccessful = await createUser(formData);
+            if (isSuccessful) {
+                navigate('/signin');
+            }
+            else throw new Error('Falha ao criar usuário');
         } catch (error: any) {
             console.error(error);
             setErrors({ general: 'Erro ao processar seu cadastro. Tente novamente.' });

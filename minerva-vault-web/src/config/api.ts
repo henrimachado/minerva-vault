@@ -15,6 +15,9 @@ api.interceptors.request.use((config) => {
     if (token) {
         config.headers.Authorization = `Bearer ${token}`;
     }
+    if (config.data instanceof FormData) {
+        delete config.headers['Content-Type'];
+    }
     return config;
 })
 
@@ -40,7 +43,7 @@ api.interceptors.response.use(
 
                     originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
                     return axios(originalRequest);
-                } 
+                }
                 localStorage.removeItem(ACCESS_TOKEN_KEY);
                 window.location.href = '/login';
             } catch (refreshError) {
