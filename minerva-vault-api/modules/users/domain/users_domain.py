@@ -1,5 +1,6 @@
 from django.db import transaction
 from rest_framework.exceptions import PermissionDenied, ValidationError
+from core.exceptions import ConflictError
 from modules.users.models import User
 from ..serializer import UserDetailSerializer, UserListSerializer, UserSerializer
 from ..service import RoleService, UserService
@@ -102,6 +103,12 @@ class UserDomain:
     def create_user(self, data: dict) -> dict:
         self.role_service.get_role_by_id(data['role_id'])
         self._validate_new_user_password(data)
+        
+        if self.service.user_exists_by_username(data['username']):
+            raise ConflictError("Nome de usuário não disponível")
+        
+        if self.service.user_exists_by_email(data['email']):
+            raise ConflictError("E-mail já cadastrado")
         
         user = self.service.create_user(data)
         return self._serialize_user(user)

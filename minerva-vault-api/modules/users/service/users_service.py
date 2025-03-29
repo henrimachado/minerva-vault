@@ -57,3 +57,9 @@ class UserService:
     
     def list_active_users(self, role_id: str) -> list[User]:
         return self.repository.list_active_users(role_id)
+    
+    def user_exists_by_username(self, username: str) -> bool:
+        return self.repository.user_exists_by_username(username)
+    
+    def user_exists_by_email(self, email: str) -> bool:
+        return self.repository.user_exists_by_email(email)

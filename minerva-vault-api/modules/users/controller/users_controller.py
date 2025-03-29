@@ -276,6 +276,7 @@ class UserController(ViewSet):
             401: "Não autorizado",
             403: "Sem permissão",
             404: "Usuário não encontrado",
+            409: 'Nome de usuário ou e-mail já cadastrado',
             500: "Erro interno do servidor"
         },
         tags=['Usuários']

@@ -58,5 +58,12 @@ class UserRepository:
     def list_active_users(self, role_id: str) -> list[User]:
         return User.objects.filter(
             is_active=True,
+            is_superuser=False,
             user_roles__role_id=role_id
         ).prefetch_related('user_roles__role')
+        
+    def user_exists_by_username (self, username: str) -> bool:
+        return User.objects.filter(username=username).exists()
+    
+    def user_exists_by_email (self, email: str) -> bool:
+        return User.objects.filter(email=email).exists()

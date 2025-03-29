@@ -1,7 +1,6 @@
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework.decorators import action
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from modules.audit.decorator import audit_log
@@ -14,6 +13,11 @@ class RoleController(ViewSet):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.domain = RoleDomain()
+    
+    def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
+        return super().get_permissions()
 
     @swagger_auto_schema(
         operation_summary="Lista tipos de usuário",
