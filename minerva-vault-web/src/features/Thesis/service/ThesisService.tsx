@@ -53,4 +53,19 @@ export default class ThesisService {
             throw new Error('Falha ao buscar detalhes da tese');
         }
     }
+
+    public static async createThesis(thesis: FormData): Promise<void> {
+        try {
+            await api.post(`${this.THESIS_URI}/`, thesis, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data.detail) {
+                throw new Error(error.response.data.detail);
+            }
+            throw new Error('Falha ao criar tese');
+        }
+    }
 }

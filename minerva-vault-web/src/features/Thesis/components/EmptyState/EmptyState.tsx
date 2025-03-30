@@ -4,7 +4,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { tokens } from '../../../../theme/theme';
 
 interface EmptyStateProps {
-// Removed hasSearched prop as it's no longer needed
+
 }
 
 const EmptyState: React.FC<EmptyStateProps> = () => {

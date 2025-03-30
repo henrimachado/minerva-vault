@@ -1,6 +1,7 @@
 import ThesisManager from '../manager/ThesisManager';
 import { ThesisFilters, ThesisListResponse, ThesisDetail } from '../dto/thesisDTO';
 import { useNotificationService } from '../../../shared/hooks/useNotificationService';
+import { CreateThesisFormData } from '../dto/createThesisDTO';
 
 export default function ThesisController() {
     const notification = useNotificationService();
@@ -37,9 +38,22 @@ export default function ThesisController() {
             throw error;
         }
     }
+
+    async function createThesis(thesis: CreateThesisFormData): Promise<void> {
+        try {
+            await ThesisManager.createThesis(thesis);
+            notification.success('Tese criada com sucesso');
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Falha ao criar tese';
+            notification.error(errorMessage);
+            throw error;
+        }
+    }
+
     return {
         listTheses,
         getThesisById,
         getUserThesis,
+        createThesis,
     };
 }

@@ -1,5 +1,5 @@
 import UserProfileService from "../service/UserProfileService";
-import { ChangePasswordData, CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
+import { BaseUserWithRole, ChangePasswordData, CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
 
 export default class UserProfileManager {
     public static async getLoggedUser(): Promise<UserProfileResponse> {
@@ -56,5 +56,9 @@ export default class UserProfileManager {
 
     public static async changePassword(passwordData: ChangePasswordData): Promise<void> {
         await UserProfileService.changePassword(passwordData);
+    }
+
+    public static async getUsersByRoleId(role_id: string): Promise<Array<BaseUserWithRole>> {
+        return await UserProfileService.getUsersByRoleId(role_id);
     }
 }

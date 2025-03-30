@@ -10,40 +10,32 @@ import {
     Typography,
     IconButton,
     CircularProgress,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    FormHelperText,
     Autocomplete,
-    Chip,
-    InputAdornment,
     Grid
 } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import 'dayjs/locale/pt-br'; // Importação para localização em português
+import 'dayjs/locale/pt-br';
 import CloseIcon from '@mui/icons-material/Close';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { tokens } from '../../../../theme/theme';
 import { useAuth } from '../../../../shared/contexts/AuthContext';
-import { UserOption, CreateThesisFormData } from '../../dto/createThesisDTO';
+import { CreateThesisFormData } from '../../dto/createThesisDTO';
+import { UserRole } from '../../../UserProfile/dto/userProfileDTO';
+import UserProfileController from '../../../UserProfile/controller/UserProfileController';
+import ThesisController from '../../controller/ThesisController';
 
-// Mock de usuários para teste
-const MOCK_USERS: UserOption[] = [
-    { id: '1', name: 'João Silva', role: 'STUDENT' },
-    { id: '2', name: 'Maria Santos', role: 'STUDENT' },
-    { id: '3', name: 'Pedro Oliveira', role: 'STUDENT' },
-    { id: '4', name: 'Ana Costa', role: 'STUDENT' },
-    { id: '5', name: 'Carlos Pereira', role: 'PROFESSOR' },
-    { id: '6', name: 'Fernanda Lima', role: 'PROFESSOR' },
-    { id: '7', name: 'Roberto Almeida', role: 'PROFESSOR' },
-    { id: '8', name: 'Luciana Martins', role: 'PROFESSOR' }
-];
+
+interface UserOption {
+    id: string;
+    name: string;
+    role: UserRole;
+}
+
 
 interface CreateThesisModalProps {
     open: boolean;
@@ -59,6 +51,8 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
     const colors = tokens.colors;
     const { user } = useAuth();
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const { getUsersByRoleId, getUserRoles } = UserProfileController();
+    const { createThesis } = ThesisController();
 
     // Verificar se o usuário é professor
     const isProfessor = user?.roles?.some(role => role.name === 'PROFESSOR');
@@ -78,24 +72,38 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
         pdf_file: null
     });
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const availableAdvisors = professors.filter(
+        professor => !formData.co_advisor_id || professor.id !== formData.co_advisor_id
+    );
 
-    // Efeito para carregar usuários
+    const availableCoAdvisors = professors.filter(
+        professor => !formData.advisor_id || professor.id !== formData.advisor_id
+    );
+
+
     useEffect(() => {
-        // Simulação de carregamento de usuários
-        // Em produção, substituir por chamada à API
+
         const loadUsers = async () => {
             try {
-                // Simular delay de rede
-                await new Promise(resolve => setTimeout(resolve, 500));
 
-                // Filtrar usuários por papel
-                const mockStudents = MOCK_USERS.filter(u => u.role === 'STUDENT');
-                const mockProfessors = MOCK_USERS.filter(u => u.role === 'PROFESSOR');
+                const userRoles = await getUserRoles();
 
-                setStudents(mockStudents);
-                setProfessors(mockProfessors);
+                if (userRoles) {
+                    const professorRoleId = userRoles.find(role => role.name === 'PROFESSOR')?.id;
+                    const studentRoleId = userRoles.find(role => role.name === 'STUDENT')?.id;
 
-                // Se for estudante, preencher automaticamente o campo de autor
+                    if (professorRoleId && studentRoleId) {
+                        const [studentsList, professorsList] = await Promise.all([
+                            getUsersByRoleId(studentRoleId),
+                            getUsersByRoleId(professorRoleId)
+                        ]);
+
+                        setStudents(studentsList);
+                        setProfessors(professorsList);
+                    }
+                }
+
+
                 if (!isProfessor && user) {
                     setFormData(prev => ({
                         ...prev,
@@ -112,12 +120,26 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
         }
     }, [open, isProfessor, user]);
 
-    // Manipuladores de eventos
+
+    const handleCloseModal = () => {
+        setFormData({
+            title: '',
+            author_id: '',
+            advisor_id: '',
+            co_advisor_id: null,
+            abstract: '',
+            keywords: '',
+            defense_date: '',
+            pdf_file: null
+        });
+        setErrors({});
+        onClose();
+    }
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
 
-        // Limpar erro do campo quando o usuário digita
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
@@ -125,8 +147,6 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
 
     const handleSelectChange = (name: string, value: string | null) => {
         setFormData(prev => ({ ...prev, [name]: value }));
-
-        // Limpar erro do campo quando o usuário seleciona
         if (errors[name]) {
             setErrors(prev => ({ ...prev, [name]: '' }));
         }
@@ -134,11 +154,9 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
 
     const handleDateChange = (date: any) => {
         if (date) {
-            // Usando dayjs para formatar a data
             const formattedDate = date.format('YYYY-MM-DD');
             setFormData(prev => ({ ...prev, defense_date: formattedDate }));
 
-            // Limpar erro do campo quando o usuário seleciona uma data
             if (errors.defense_date) {
                 setErrors(prev => ({ ...prev, defense_date: '' }));
             }
@@ -149,7 +167,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
         const file = e.target.files?.[0] || null;
 
         if (file) {
-            // Verificar se é um PDF
+
             if (!file.name.endsWith('.pdf')) {
                 setErrors(prev => ({ ...prev, pdf_file: 'O arquivo deve ser um PDF' }));
                 return;
@@ -157,7 +175,6 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
 
             setFormData(prev => ({ ...prev, pdf_file: file }));
 
-            // Limpar erro do campo quando o usuário seleciona um arquivo
             if (errors.pdf_file) {
                 setErrors(prev => ({ ...prev, pdf_file: '' }));
             }
@@ -174,7 +191,6 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validar formulário
         const validationErrors: Record<string, string> = {};
 
         if (!formData.title.trim()) {
@@ -214,41 +230,20 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
             return;
         }
 
-        // Enviar formulário
         setLoading(true);
 
         try {
-            // Simulação de envio para API
-            // Em produção, substituir por chamada à API
-            await new Promise(resolve => setTimeout(resolve, 1000));
 
-            console.log('Dados enviados:', formData);
-
-            // Criar FormData para envio do arquivo
-            const formDataToSend = new FormData();
-            Object.entries(formData).forEach(([key, value]) => {
-                if (key === 'pdf_file' && value) {
-                    formDataToSend.append(key, value);
-                } else if (value !== null && value !== undefined) {
-                    formDataToSend.append(key, String(value));
-                }
-            });
-
-            // Aqui seria a chamada à API
-            // const response = await api.post('/thesis', formDataToSend);
-
-            // Fechar modal e notificar sucesso
-            onSuccess?.();
+            await createThesis(formData);
             onClose();
         } catch (error) {
             console.error('Erro ao criar monografia:', error);
-            // Tratar erros da API
         } finally {
             setLoading(false);
         }
     };
 
-    // Formatação de bytes para exibição do tamanho do arquivo
+
     const formatBytes = (bytes: number) => {
         if (bytes < 1024) return bytes + ' bytes';
         else if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
@@ -276,7 +271,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                         Cadastrar Nova Monografia
                     </Typography>
                     {!loading && (
-                        <IconButton onClick={onClose} size="small">
+                        <IconButton onClick={handleCloseModal} size="small">
                             <CloseIcon sx={{ color: colors.text.secondary }} />
                         </IconButton>
                     )}
@@ -377,7 +372,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                         <Grid size={6}>
                             <Autocomplete
                                 id="advisor-select"
-                                options={professors}
+                                options={availableAdvisors}
                                 getOptionLabel={(option) => option.name}
                                 value={professors.find(p => p.id === formData.advisor_id) || null}
                                 onChange={(_, newValue) => handleSelectChange('advisor_id', newValue?.id || '')}
@@ -407,7 +402,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                         <Grid size={6}>
                             <Autocomplete
                                 id="co-advisor-select"
-                                options={professors}
+                                options={availableCoAdvisors}
                                 getOptionLabel={(option) => option.name}
                                 value={professors.find(p => p.id === formData.co_advisor_id) || null}
                                 onChange={(_, newValue) => handleSelectChange('co_advisor_id', newValue?.id || null)}
@@ -566,7 +561,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
 
                 <DialogActions sx={{ bgcolor: colors.bg.secondary, p: 2 }}>
                     <Button
-                        onClick={onClose}
+                        onClick={handleCloseModal}
                         disabled={loading}
                         sx={{
                             color: colors.text.secondary,

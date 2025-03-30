@@ -1,5 +1,5 @@
 import UserProfileManager from '../manager/UserProfileManager';
-import { ChangePasswordData, CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from '../dto/userProfileDTO';
+import { BaseUserWithRole, ChangePasswordData, CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from '../dto/userProfileDTO';
 import { useNotificationService } from '../../../shared/hooks/useNotificationService';
 
 export default function UserProfileController() {
@@ -16,14 +16,25 @@ export default function UserProfileController() {
         }
     }
 
-    async function getUserRoles(): Promise<Array<UserRole> | undefined> {
+    async function getUserRoles(): Promise<Array<UserRole>> {
         try {
             const roles = await UserProfileManager.getUserRoles();
             return roles;
         } catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Falha ao recuperar informações de papéis de usuário';
             notification.error(errorMessage);
-            return undefined;
+            return [];
+        }
+    }
+
+    async function getUsersByRoleId(role_id: string): Promise<Array<BaseUserWithRole>> {
+        try {
+            const users = await UserProfileManager.getUsersByRoleId(role_id);
+            return users;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Falha ao recuperar usuários por papel';
+            notification.error(errorMessage);
+            return [];
         }
     }
 
@@ -69,5 +80,6 @@ export default function UserProfileController() {
         createUser,
         updateUser,
         changePassword,
+        getUsersByRoleId,
     };
 }

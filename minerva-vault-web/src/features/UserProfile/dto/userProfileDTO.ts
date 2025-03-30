@@ -45,3 +45,9 @@ export interface ChangePasswordData {
     new_password: string;
     password_confirmation: string;
 }
+
+export interface BaseUserWithRole {
+    id: string;
+    name: string;
+    role: UserRole;
+}

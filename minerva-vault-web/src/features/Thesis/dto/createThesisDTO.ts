@@ -1,8 +1,3 @@
-export interface UserOption {
-    id: string;
-    name: string;
-    role?: string;
-}
 
 export interface CreateThesisFormData {
     title: string;
