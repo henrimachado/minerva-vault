@@ -24,6 +24,8 @@ import ThesisDetailModal from '../components/ThesisDetailModal/ThesisDetailModal
 import { tokens } from '../../../theme/theme';
 import { useAuth } from '../../../shared/contexts/AuthContext';
 import UserThesisTable from '../components/UserThesisTable/UserThesisTable';
+import CreateThesisModal from '../components/CreateThesisModal/CreateThesisModal';
+
 
 // Interface para as abas
 interface TabPanelProps {
@@ -76,16 +78,14 @@ function UserThesisListPage() {
     const [filterModalOpen, setFilterModalOpen] = useState(false);
     const [createThesisModalOpen, setCreateThesisModalOpen] = useState(false);
 
-    // Efeito para carregar as monografias iniciais
     useEffect(() => {
         fetchTheses();
     }, []);
 
-    // Manipulador de mudança de aba
+
     const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
         setTabValue(newValue);
 
-        // Atualizar o filtro de orientação com base na aba selecionada
         const newOrientation: 'ADVISOR' | 'COADVISOR' = newValue === 0 ? 'ADVISOR' : 'COADVISOR';
         const newFilters: ThesisFilters = {
             ...filters,
@@ -97,7 +97,7 @@ function UserThesisListPage() {
         fetchTheses(newFilters);
     };
 
-    // Função para buscar teses
+
     const fetchTheses = async (newFilters?: ThesisFilters) => {
         setLoading(true);
 
@@ -116,7 +116,6 @@ function UserThesisListPage() {
         }
     };
 
-    // Manipuladores de eventos
     const handleSearch = () => {
         const newFilters = { ...filters, context: searchQuery, page: 1 };
         fetchTheses(newFilters);
@@ -147,7 +146,6 @@ function UserThesisListPage() {
     };
 
     const handleRemoveFilter = (key: keyof ThesisFilters) => {
-        // Não permitir remover o filtro de orientação
         if (key === 'orientation' && isProfessor) {
             return;
         }
@@ -167,14 +165,14 @@ function UserThesisListPage() {
         setDetailModalOpen(true);
     };
 
-    const handleOpenCreateThesisModal = () => {
-        setCreateThesisModalOpen(true);
-    };
 
     const handleCloseCreateThesisModal = () => {
         setCreateThesisModalOpen(false);
-        // Recarregar a lista após criar uma nova tese
+    };
+
+    const handleThesisCreated = () => {
         fetchTheses();
+
     };
 
     return (
@@ -189,7 +187,7 @@ function UserThesisListPage() {
                 overflow: 'hidden'
             }}
         >
-            {/* Cabeçalho com título e botão de cadastro */}
+
             <Box
                 mb={2}
                 display="flex"
@@ -203,7 +201,7 @@ function UserThesisListPage() {
                 <Button
                     variant="contained"
                     startIcon={<AddIcon />}
-                    onClick={handleOpenCreateThesisModal}
+                    onClick={() => setCreateThesisModalOpen(true)}
                     sx={{
                         backgroundColor: colors.action.primary,
                         '&:hover': {
@@ -215,7 +213,6 @@ function UserThesisListPage() {
                 </Button>
             </Box>
 
-            {/* Abas */}
             {isProfessor && (
                 <Paper
                     elevation={0}
@@ -248,7 +245,6 @@ function UserThesisListPage() {
                 </Paper>
             )}
 
-            {/* Barra de pesquisa */}
             <Paper
                 elevation={0}
                 sx={{
@@ -268,12 +264,14 @@ function UserThesisListPage() {
                     onKeyDown={handleKeyPress}
                     variant="outlined"
                     size="small"
-                    InputProps={{
-                        startAdornment: (
-                            <InputAdornment position="start">
-                                <SearchIcon sx={{ color: colors.text.secondary }} />
-                            </InputAdornment>
-                        ),
+                    slotProps={{
+                        input: {
+                            startAdornment: (
+                                <InputAdornment position="start">
+                                    <SearchIcon sx={{ color: colors.text.secondary }} />
+                                </InputAdornment>
+                            ),
+                        }
                     }}
                     sx={{
                         mr: 2,
@@ -319,7 +317,7 @@ function UserThesisListPage() {
                 </IconButton>
             </Paper>
 
-            {/* Filtros aplicados */}
+   
             <Box mb={1}>
                 <AppliedFilters
                     filters={filters}
@@ -328,12 +326,11 @@ function UserThesisListPage() {
                 />
             </Box>
 
-            {/* Conteúdo das abas */}
             <Box sx={{ flexGrow: 1, overflow: 'hidden' }}>
                 {isProfessor ? (
                     <React.Fragment>
                         <TabPanel value={tabValue} index={0}>
-                            {/* Monografias que orientei */}
+    
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <CircularProgress />
@@ -355,7 +352,6 @@ function UserThesisListPage() {
                             )}
                         </TabPanel>
                         <TabPanel value={tabValue} index={1}>
-                            {/* Monografias que co-orientei */}
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <CircularProgress />
@@ -379,7 +375,6 @@ function UserThesisListPage() {
                     </React.Fragment>
                 ) : (
                     <TabPanel value={tabValue} index={0}>
-                        {/* Minhas monografias (estudante) */}
                         {loading ? (
                             <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                 <CircularProgress />
@@ -403,7 +398,6 @@ function UserThesisListPage() {
                 )}
             </Box>
 
-            {/* Modais */}
             <FilterModal
                 open={filterModalOpen}
                 onClose={() => setFilterModalOpen(false)}
@@ -422,11 +416,11 @@ function UserThesisListPage() {
                 thesisId={selectedThesisId}
             />
 
-            {/* Placeholder para o modal de criação de monografia */}
-            {/* <CreateThesisModal
-             open={createThesisModalOpen}
-             onClose={handleCloseCreateThesisModal}
-         /> */}
+            <CreateThesisModal
+                open={createThesisModalOpen}
+                onClose={handleCloseCreateThesisModal}
+                onSuccess={handleThesisCreated}
+            />
         </Container>
     );
 }

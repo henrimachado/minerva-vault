@@ -23,10 +23,10 @@ class UserRepository:
                 user.avatar.delete(save=False)
             user.avatar = data['avatar']
             update_fields.append('avatar')
-            
+        
         if 'is_active' in data and isinstance(data['is_active'], bool):
             user.is_active = data['is_active']
-            update_fields.append('is_active')
+            update_fields.append('is_active') 
         
         if update_fields:
             user.save(update_fields=update_fields)

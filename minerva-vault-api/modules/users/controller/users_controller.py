@@ -284,9 +284,10 @@ class UserController(ViewSet):
     )
     @audit_log(action='PATCH', module='USERS', table_name='users')
     def partial_update(self, request, pk=None):
-        # data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
+        original_fields = set(request.data.keys())
         data = request.data.copy() 
         data['user_id'] = str(pk)
+    
         
         if 'avatar' in request.FILES:
             data['avatar'] = request.FILES['avatar']
@@ -316,10 +317,14 @@ class UserController(ViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
         try:
+            validated_data = validator.validated_data
+            if 'is_active' not in original_fields and 'is_active' in validated_data:
+                validated_data.pop('is_active')
+            print(validator.validated_data)
             result = self.domain.update_user(
                 requesting_user=request.user,
                 user_id=str(pk),
-                data=validator.validated_data,
+                data=validated_data,
                 request=request
             )
             return Response(result)

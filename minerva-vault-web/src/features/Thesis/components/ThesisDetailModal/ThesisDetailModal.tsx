@@ -20,10 +20,11 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PersonIcon from '@mui/icons-material/Person';
 import SchoolIcon from '@mui/icons-material/School';
-import { parseISO, format } from 'date-fns';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
 import { tokens } from '../../../../theme/theme';
 import ThesisController from '../../controller/ThesisController';
-import { ThesisDetail, User } from '../../dto/thesisDTO'; 
+import { ThesisDetail, User } from '../../dto/thesisDTO';
 
 interface ThesisDetailModalProps {
     open: boolean;
@@ -66,8 +67,8 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
 
     const formatDate = (dateString: string) => {
         try {
-            const date = parseISO(dateString);
-            return format(date, 'dd/MM/yyyy');
+            const date = dayjs(dateString);
+            return dayjs(date).format('DD/MM/YYYY');
         } catch (error) {
             return dateString;
         }
@@ -102,8 +103,9 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                 // Formatar data como DDMMAAAA
                 let dateFormatted = '';
                 try {
-                    const date = parseISO(thesis.defense_date);
-                    dateFormatted = format(date, 'ddMMyyyy');
+                    const date = dayjs(thesis.defense_date);
+                    dateFormatted = dayjs(date).format('DD/MM/YYYY')
+
                 } catch (error) {
                     console.error("Erro ao formatar data:", error);
                     dateFormatted = "00000000";

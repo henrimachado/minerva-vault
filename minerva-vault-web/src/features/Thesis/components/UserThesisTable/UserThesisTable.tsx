@@ -5,8 +5,9 @@ import {
 } from '@mui/material';
 import { Thesis, OrderByOption } from '../../dto/thesisDTO';
 import { tokens } from '../../../../theme/theme';
-import { parseISO, format } from 'date-fns';
 import { useAuth } from '../../../../shared/contexts/AuthContext';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br'; 
 
 interface UserThesisTableProps {
     theses: Thesis[];
@@ -78,8 +79,8 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
 
     const formatDate = (dateString: string) => {
         try {
-            const date = parseISO(dateString);
-            return format(date, 'dd/MM/yyyy');
+            const date = dayjs(dateString);
+            return dayjs(date).format('DD/MM/YYYY');
         } catch (error) {
             return dateString;
         }

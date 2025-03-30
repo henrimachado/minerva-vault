@@ -92,11 +92,13 @@ const FilterModal: React.FC<FilterModalProps> = ({
             onClose={onClose}
             fullWidth
             maxWidth="sm"
-            PaperProps={{
-                sx: {
-                    backgroundColor: colors.bg.secondary,
-                    borderRadius: 2,
-                },
+            slotProps={{
+                paper: {
+                    sx: {
+                        backgroundColor: colors.bg.secondary,
+                        borderRadius: 2,
+                    },
+                }
             }}
         >
             <DialogTitle sx={{ color: colors.text.primary, pb: 1 }}>
@@ -205,8 +207,10 @@ const FilterModal: React.FC<FilterModalProps> = ({
                             onChange={handleDateChange}
                             variant="outlined"
                             size="small"
-                            InputLabelProps={{
-                                shrink: true,
+                            slotProps={{
+                                inputLabel: {
+                                    shrink: true,
+                                }
                             }}
                             sx={{
                                 '& .MuiOutlinedInput-root': {
