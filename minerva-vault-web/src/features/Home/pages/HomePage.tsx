@@ -28,11 +28,10 @@ const HomePage = () => {
   return (
     <Box
       sx={{
-        minHeight: '100vh',
+        height: 'calc(100vh - 100px)',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        background: `linear-gradient(135deg, ${tokens.colors.bg.primary} 0%, ${tokens.colors.bg.secondary} 100%)`,
         padding: 2,
       }}
     >
@@ -101,6 +100,7 @@ const HomePage = () => {
                 maxWidth: 600,
                 borderRadius: 3,
                 backgroundColor: tokens.colors.bg.secondary,
+                boxShadow: 'none',
                 border: `1px solid ${tokens.colors.border.default}`,
                 '&:hover': {
                   border: `1px solid ${tokens.colors.border.focus}`,
@@ -114,13 +114,15 @@ const HomePage = () => {
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 variant="standard"
-                InputProps={{
-                  disableUnderline: true,
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon sx={{ color: tokens.colors.text.secondary, ml: 1 }} />
-                    </InputAdornment>
-                  ),
+                slotProps={{
+                  input: {
+                    disableUnderline: true,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchIcon sx={{ color: tokens.colors.text.secondary, ml: 1 }} />
+                      </InputAdornment>
+                    ),
+                  }
                 }}
                 sx={{
                   ml: 1,
