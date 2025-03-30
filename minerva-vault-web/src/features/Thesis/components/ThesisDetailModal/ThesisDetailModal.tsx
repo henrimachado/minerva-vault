@@ -48,7 +48,7 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
         if (open && thesisId) {
             fetchThesisDetails(thesisId);
         } else {
-            // Reset data when modal closes
+
             setThesis(null);
         }
     }, [open, thesisId]);
@@ -95,12 +95,11 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                 const blob = await response.blob();
                 const blobUrl = URL.createObjectURL(blob);
 
-                // Criar nome do arquivo baseado no autor e data de defesa
+
                 let authorName = thesis.author?.name || "Autor";
-                // Substituir espaços por underscores
+
                 authorName = authorName.replace(/\s+/g, '_').toUpperCase();
 
-                // Formatar data como DDMMAAAA
                 let dateFormatted = '';
                 try {
                     const date = dayjs(thesis.defense_date);
@@ -111,7 +110,6 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                     dateFormatted = "00000000";
                 }
 
-                // Nome do arquivo final
                 const fileName = `${authorName}_${dateFormatted}.pdf`;
 
                 const link = document.createElement('a');
@@ -250,7 +248,7 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                                         flexWrap="wrap"
                                         gap={2}
                                     >
-                                        {/* Título com ícone - autor em maiúsculas + data */}
+
                                         <Box display="flex" alignItems="center">
                                             <PictureAsPdfIcon
                                                 sx={{
@@ -264,14 +262,14 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                                             </Typography>
                                         </Box>
 
-                                        {/* Metadados - valores na frente */}
+
                                         <Box
                                             display="flex"
                                             alignItems="center"
                                             gap={4}
                                             sx={{ flexGrow: 1, ml: 2 }}
                                         >
-                                            {/* Coluna Páginas */}
+
                                             <Box display="flex" alignItems="center">
                                                 <Typography variant="subtitle2" sx={{ color: colors.text.secondary, mr: 1 }}>
                                                     Páginas:
@@ -281,7 +279,7 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                                                 </Typography>
                                             </Box>
 
-                                            {/* Coluna Tamanho */}
+
                                             <Box display="flex" alignItems="center">
                                                 <Typography variant="subtitle2" sx={{ color: colors.text.secondary, mr: 1 }}>
                                                     Tamanho:
@@ -292,7 +290,7 @@ const ThesisDetailModal: React.FC<ThesisDetailModalProps> = ({
                                             </Box>
                                         </Box>
 
-                                        {/* Botões */}
+
                                         <Box display="flex" gap={1}>
                                             <Button
                                                 variant="outlined"

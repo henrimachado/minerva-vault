@@ -74,7 +74,7 @@ typography: {
   fontWeightMedium: tokens.typography.fontWeightMedium,
   fontWeightBold: tokens.typography.fontWeightBold,
   
-  // Configurações específicas para cada variante de texto
+
   h1: {
     fontWeight: 700,
     letterSpacing: '-0.025em',
@@ -111,7 +111,7 @@ typography: {
   },
   button: {
     fontWeight: 500,
-    textTransform: 'none', // A fonte Inter fica melhor sem texto em maiúsculas
+    textTransform: 'none', 
   },
   caption: {
     fontWeight: 400,
@@ -124,7 +124,7 @@ typography: {
 components: {
   MuiCssBaseline: {
     styleOverrides: {
-      // Melhorias globais para a renderização da fonte
+    
       html: {
         WebkitFontSmoothing: 'antialiased',
         MozOsxFontSmoothing: 'grayscale',

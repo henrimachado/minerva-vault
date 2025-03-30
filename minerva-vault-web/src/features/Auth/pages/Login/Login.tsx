@@ -1,18 +1,26 @@
-import React, { useState } from 'react';
-import { useNavigate, Link as RouterLink } from 'react-router-dom';
+import React, { useState } from "react";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import {
-    Container, Box, TextField, Button, Typography,
-    Paper, Avatar, Alert, CircularProgress, Divider
-} from '@mui/material';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import AuthController from '../../controller/AuthController';
-import UserProfileController from '../../../UserProfile/controller/UserProfileController';
-import { useAuth } from '../../../../shared/contexts/AuthContext';
-import { tokens } from '../../../../theme/theme';
+    Container,
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Paper,
+    Avatar,
+    Alert,
+    CircularProgress,
+    Divider,
+} from "@mui/material";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import AuthController from "../../controller/AuthController";
+import UserProfileController from "../../../UserProfile/controller/UserProfileController";
+import { useAuth } from "../../../../shared/contexts/AuthContext";
+import { tokens } from "../../../../theme/theme";
 
 function Login() {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
@@ -37,16 +45,12 @@ function Login() {
                 if (userProfile) {
                     setUser(userProfile);
                 }
-
             }
-
         } catch (err: any) {
             return;
         } finally {
             setLoading(false);
         }
-
-
     }
 
     return (
@@ -54,31 +58,30 @@ function Login() {
             component="main"
             maxWidth="xs"
             sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '100%',
-                height: 'auto',
+                position: "absolute",
+                top: "50%",
+                left: "50%",
+                transform: "translate(-50%, -50%)",
+                width: "100%",
+                height: "auto",
             }}
         >
             <Paper
                 elevation={4}
                 sx={{
-                    width: '100%',
+                    width: "100%",
                     backgroundColor: tokens.colors.bg.primary,
                     color: tokens.colors.text.primary,
                     p: 2.5,
                     borderRadius: 2,
                 }}
             >
-
                 <Box
                     sx={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        mb: 1.5
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        mb: 1.5,
                     }}
                 >
                     <Avatar
@@ -88,7 +91,9 @@ function Login() {
                             bgcolor: tokens.colors.action.primary,
                         }}
                     >
-                        <LockOutlinedIcon sx={{ fontSize: 20, color: tokens.colors.text.primary }} />
+                        <LockOutlinedIcon
+                            sx={{ fontSize: 20, color: tokens.colors.text.primary }}
+                        />
                     </Avatar>
                 </Box>
 
@@ -98,7 +103,7 @@ function Login() {
                         sx={{
                             mb: 1.5,
                             py: 0,
-                            '& .MuiAlert-message': { py: 0.5 }
+                            "& .MuiAlert-message": { py: 0.5 },
                         }}
                     >
                         {error}
@@ -150,25 +155,34 @@ function Login() {
                             mt: 2,
                             mb: 1,
                             py: 0.6,
-                            height: '36px',
+                            height: "36px",
                             backgroundColor: tokens.colors.action.primary,
-                            boxShadow: 'none',
-                            '&:hover': {
+                            boxShadow: "none",
+                            "&:hover": {
                                 backgroundColor: tokens.colors.action.hover,
-                                boxShadow: 'none',
+                                boxShadow: "none",
                             },
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
                         }}
                         disabled={loading || !username || !password}
                     >
                         {loading ? <CircularProgress size={20} /> : "Entrar"}
                     </Button>
 
-                    <Box sx={{ textAlign: 'center', mt: 1 }}>
+                    <Box sx={{ textAlign: "center", mt: 1 }}>
                         <Typography variant="caption" color={tokens.colors.text.secondary}>
-                            Não tem uma conta? <RouterLink to="/cadastro" style={{ color: tokens.colors.action.primary, textDecoration: 'none' }}>Cadastre-se</RouterLink>
+                            Não tem uma conta?{" "}
+                            <RouterLink
+                                to="/cadastro"
+                                style={{
+                                    color: tokens.colors.action.primary,
+                                    textDecoration: "none",
+                                }}
+                            >
+                                Cadastre-se
+                            </RouterLink>
                         </Typography>
                     </Box>
                 </Box>

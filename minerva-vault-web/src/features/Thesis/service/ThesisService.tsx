@@ -68,4 +68,30 @@ export default class ThesisService {
             throw new Error('Falha ao criar tese');
         }
     }
+
+    public static async updateThesis(thesis_id: string, updatedThesis: FormData): Promise<void> {
+        try {
+            await api.patch(`${this.THESIS_URI}/${thesis_id}/`, updatedThesis, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data.detail) {
+                throw new Error(error.response.data.detail);
+            }
+            throw new Error('Falha ao atualizar tese');
+        }
+    }
+
+    public static async deleteThesis(id: string): Promise<void> {
+        try {
+            await api.delete(`${this.THESIS_URI}/${id}/`);
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data.detail) {
+                throw new Error(error.response.data.detail);
+            }
+            throw new Error('Falha ao deletar tese');
+        }
+    }
 }

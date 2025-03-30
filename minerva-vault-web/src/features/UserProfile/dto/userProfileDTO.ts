@@ -14,7 +14,7 @@ export interface UserProfileResponse {
         needs_change: boolean;
         days_until_expiration: number;
         last_change: string;
-        urgency: 'EXPIRED' | 'CRITICAL' | 'WARNING' | 'OK';
+        urgency: "EXPIRED" | "CRITICAL" | "WARNING" | "OK";
     };
 }
 

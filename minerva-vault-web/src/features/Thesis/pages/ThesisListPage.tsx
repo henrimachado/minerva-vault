@@ -19,7 +19,7 @@ import ThesisTable from '../components/ThesisTable/ThesisTable';
 import EmptyState from '../components/EmptyState/EmptyState';
 import FilterModal from '../components/FilterModal/FilterModal';
 import AppliedFilters from '../components/AppliedFilters/AppliedFilters';
-import ThesisDetailModal from '../components/ThesisDetailModal/ThesisDetailModal'; // Importe o modal
+import ThesisDetailModal from '../components/ThesisDetailModal/ThesisDetailModal';
 import { tokens } from '../../../theme/theme';
 
 function ThesisListPage() {
@@ -27,7 +27,7 @@ function ThesisListPage() {
     const { listTheses } = ThesisController();
     const colors = tokens.colors;
 
-    // Estados
+
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<ThesisFilters>({
         page: 1
@@ -36,13 +36,13 @@ function ThesisListPage() {
     const [loading, setLoading] = useState(false);
     const [hasSearched, setHasSearched] = useState(false);
 
-    // Estados para o modal de detalhes
+
     const [selectedThesisId, setSelectedThesisId] = useState<string | null>(null);
     const [detailModalOpen, setDetailModalOpen] = useState(false);
 
     const [filterModalOpen, setFilterModalOpen] = useState(false);
 
-    // Efeito para carregar parâmetros da URL ou todas as teses
+
     useEffect(() => {
         const context = searchParams.get('context');
         if (context) {
@@ -50,7 +50,7 @@ function ThesisListPage() {
             setFilters(prev => ({ ...prev, context }));
             fetchTheses({ context });
         } else {
-            // Se não houver contexto, carrega todas as teses
+  
             fetchTheses({ page: 1 });
         }
     }, []);
@@ -63,13 +63,13 @@ function ThesisListPage() {
         setFilterModalOpen(false);
     };
 
-    // Manipuladores do modal de detalhes
+
     const handleCloseDetailModal = () => {
         setDetailModalOpen(false);
     };
 
     const handleApplyFilters = (newFilters: ThesisFilters) => {
-        // Make sure we preserve context if it was already set
+
         const filtersToApply = {
             ...newFilters,
             context: newFilters.context || filters.context,
@@ -80,7 +80,7 @@ function ThesisListPage() {
         fetchTheses(filtersToApply);
     };
 
-    // Função para buscar teses
+ 
     const fetchTheses = async (newFilters?: ThesisFilters) => {
         setLoading(true);
         setHasSearched(true);
@@ -90,7 +90,7 @@ function ThesisListPage() {
             const result = await listTheses(filtersToUse);
             setThesisData(result);
 
-            // Atualizar URL com os filtros
+
             const params = new URLSearchParams();
             Object.entries(filtersToUse).forEach(([key, value]) => {
                 if (value !== undefined && value !== '' && key !== 'page') {
@@ -106,7 +106,6 @@ function ThesisListPage() {
         }
     };
 
-    // Manipuladores de eventos
     const handleSearch = () => {
         const newFilters = { ...filters, context: searchQuery, page: 1 };
         setFilters(newFilters);
@@ -126,7 +125,7 @@ function ThesisListPage() {
     };
 
     const handleSortChange = (orderBy: string) => {
-        // Verificar se o valor é uma OrderByOption válida
+
         const validOrderBy = isValidOrderByOption(orderBy) ? orderBy as OrderByOption : undefined;
 
         const newFilters = {
@@ -162,8 +161,8 @@ function ThesisListPage() {
     };
 
     const handleRowClick = (thesis: Thesis) => {
-        setSelectedThesisId(thesis.id); // Armazena o ID da tese selecionada
-        setDetailModalOpen(true); // Abre o modal
+        setSelectedThesisId(thesis.id); 
+        setDetailModalOpen(true); 
     };
 
     return (
@@ -177,7 +176,7 @@ function ThesisListPage() {
                 </Typography>
             </Box>
 
-            {/* Barra de pesquisa */}
+
             <Paper
                 elevation={0}
                 sx={{
@@ -250,10 +249,10 @@ function ThesisListPage() {
                 </IconButton>
             </Paper>
 
-            {/* Filtros aplicados */}
+         
             <AppliedFilters filters={filters} onRemoveFilter={handleRemoveFilter} />
 
-            {/* Conteúdo principal */}
+           
             {loading && !thesisData ? (
                 <Box sx={{ display: 'flex', justifyContent: 'center', my: 4 }}>
                     <CircularProgress />
@@ -273,7 +272,7 @@ function ThesisListPage() {
                 <EmptyState />
             )}
 
-            {/* Modal de Filtros */}
+      
             <FilterModal
                 open={filterModalOpen}
                 onClose={handleCloseFilterModal}
@@ -281,7 +280,7 @@ function ThesisListPage() {
                 onApplyFilters={handleApplyFilters}
             />
 
-            {/* Modal de Detalhes da Tese */}
+           
             <ThesisDetailModal
                 open={detailModalOpen}
                 onClose={handleCloseDetailModal}

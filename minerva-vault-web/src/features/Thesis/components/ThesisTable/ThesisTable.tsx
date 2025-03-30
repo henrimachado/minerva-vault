@@ -6,7 +6,7 @@ import {
 import { Thesis, OrderByOption } from '../../dto/thesisDTO';
 import { tokens } from '../../../../theme/theme';
 import dayjs from 'dayjs';
-import 'dayjs/locale/pt-br'; 
+import 'dayjs/locale/pt-br';
 
 interface ThesisTableProps {
     theses: Thesis[];
@@ -98,7 +98,7 @@ const ThesisTable: React.FC<ThesisTableProps> = ({
             height: 'calc(100vh - 350px)',
             position: 'relative'
         }}>
-            {/* Overlay de carregamento */}
+
             {loading && (
                 <Box
                     position="absolute"
@@ -117,15 +117,15 @@ const ThesisTable: React.FC<ThesisTableProps> = ({
                 </Box>
             )}
 
-            {/* Container da tabela - usa flexGrow para ocupar espaço disponível */}
+
             <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
                 <TableContainer
                     component={Paper}
                     sx={{
                         backgroundColor: colors.bg.secondary,
                         borderRadius: 1,
-                        height: 'auto', // Altura automática
-                        maxHeight: '100%', // Máximo é 100% do container pai
+                        height: 'auto',
+                        maxHeight: '100%',
                     }}
                 >
                     <Table stickyHeader size="small">
@@ -263,12 +263,12 @@ const ThesisTable: React.FC<ThesisTableProps> = ({
                 </TableContainer>
             </Box>
 
-            {/* Paginação - Agora com altura fixa e não flexível */}
+
             {totalPages > 1 && (
                 <Box sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    height: '32px', // Altura fixa para a paginação
+                    height: '32px',
                 }}>
                     <Pagination
                         count={totalPages}
@@ -280,9 +280,9 @@ const ThesisTable: React.FC<ThesisTableProps> = ({
                             pb: 1,
                             '& .MuiPaginationItem-root': {
                                 color: colors.text.secondary,
-                                padding: '0 4px', // Reduzido padding dos itens
-                                minWidth: '24px', // Reduzido tamanho mínimo
-                                height: '24px', // Reduzido altura
+                                padding: '0 4px',
+                                minWidth: '24px',
+                                height: '24px',
                             },
                             '& .Mui-selected': {
                                 backgroundColor: `${colors.action.primary} !important`,

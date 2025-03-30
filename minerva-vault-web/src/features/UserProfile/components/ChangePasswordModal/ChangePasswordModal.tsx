@@ -104,7 +104,7 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ openModal, se
 
                 handleClose();
             }
-            
+
         } catch (error: any) {
             setErrors({
                 general: error.message || 'Erro ao alterar senha. Tente novamente.'

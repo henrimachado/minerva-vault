@@ -28,20 +28,16 @@ class ThesisRepository:
             'author', 'advisor', 'co_advisor'
         )
         
-        # Aplicar filtro baseado no papel do usuário
         if is_student:
             query = query.filter(author=user)
         elif is_professor:
-            # Se for professor e tiver filtro de orientação
             if orientation == "ADVISOR":
                 query = query.filter(advisor=user)
             elif orientation == "COADVISOR":
                 query = query.filter(co_advisor=user)
             else:
-                # Comportamento padrão: mostrar ambos
                 query = query.filter(Q(advisor=user) | Q(co_advisor=user))
-        
-        # Aplicar os mesmos filtros da rota list
+
         if filters:
             if filters.get('title'):
                 query = query.filter(title__icontains=filters['title'])

@@ -36,7 +36,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     const colors = tokens.colors;
     const [filters, setFilters] = useState<ThesisFilters>({ ...currentFilters });
 
-    // Reset the form when modal opens with current filters
+
     useEffect(() => {
         if (open) {
             setFilters({ ...currentFilters });
@@ -55,7 +55,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     const handleSortChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         const value = event.target.value as OrderByOption | '';
         if (value === '') {
-            // Remove order_by if empty
+
             const newFilters = { ...filters };
             delete newFilters.order_by;
             setFilters(newFilters);
@@ -65,7 +65,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     };
 
     const handleApplyFilters = () => {
-        // Clean empty filters before applying
+
         const cleanedFilters = Object.entries(filters).reduce((acc, [key, value]) => {
             if (value !== undefined && value !== '') {
                 acc[key as keyof ThesisFilters] = value;
@@ -73,7 +73,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
             return acc;
         }, {} as ThesisFilters);
 
-        // Always preserve page number
+
         cleanedFilters.page = 1;
 
         onApplyFilters(cleanedFilters);
@@ -81,7 +81,7 @@ const FilterModal: React.FC<FilterModalProps> = ({
     };
 
     const handleClearFilters = () => {
-        // Keep only page number
+
         const clearedFilters = { page: 1 };
         setFilters(clearedFilters);
     };

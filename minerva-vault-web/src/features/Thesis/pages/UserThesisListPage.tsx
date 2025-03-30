@@ -20,14 +20,14 @@ import ThesisController from '../controller/ThesisController';
 import EmptyState from '../components/EmptyState/EmptyState';
 import FilterModal from '../components/FilterModal/FilterModal';
 import AppliedFilters from '../components/AppliedFilters/AppliedFilters';
-import ThesisDetailModal from '../components/ThesisDetailModal/ThesisDetailModal';
+import ThesisEditModal from '../components/ThesisEditModal/ThesisEditModal';
 import { tokens } from '../../../theme/theme';
 import { useAuth } from '../../../shared/contexts/AuthContext';
 import UserThesisTable from '../components/UserThesisTable/UserThesisTable';
 import CreateThesisModal from '../components/CreateThesisModal/CreateThesisModal';
 
 
-// Interface para as abas
+
 interface TabPanelProps {
     children?: React.ReactNode;
     index: number;
@@ -60,10 +60,10 @@ function UserThesisListPage() {
     const colors = tokens.colors;
     const { getUserThesis } = ThesisController();
 
-    // Verificar se o usuário é professor
+
     const isProfessor = user?.roles?.some(role => role.name === 'PROFESSOR');
 
-    // Estados
+
     const [tabValue, setTabValue] = useState(0);
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<ThesisFilters>({
@@ -166,9 +166,6 @@ function UserThesisListPage() {
     };
 
 
-    const handleCloseCreateThesisModal = () => {
-        setCreateThesisModalOpen(false);
-    };
 
     const handleThesisCreated = () => {
         fetchTheses();
@@ -317,7 +314,7 @@ function UserThesisListPage() {
                 </IconButton>
             </Paper>
 
-   
+
             <Box mb={1}>
                 <AppliedFilters
                     filters={filters}
@@ -330,7 +327,7 @@ function UserThesisListPage() {
                 {isProfessor ? (
                     <React.Fragment>
                         <TabPanel value={tabValue} index={0}>
-    
+
                             {loading ? (
                                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                     <CircularProgress />
@@ -410,15 +407,16 @@ function UserThesisListPage() {
                 }}
             />
 
-            <ThesisDetailModal
+            <ThesisEditModal
                 open={detailModalOpen}
-                onClose={() => setDetailModalOpen(false)}
+                onClose={setDetailModalOpen}
                 thesisId={selectedThesisId}
+                onSuccess={() => fetchTheses()}  
             />
 
             <CreateThesisModal
                 open={createThesisModalOpen}
-                onClose={handleCloseCreateThesisModal}
+                onClose={setCreateThesisModalOpen}
                 onSuccess={handleThesisCreated}
             />
         </Container>

@@ -7,7 +7,7 @@ import { Thesis, OrderByOption } from '../../dto/thesisDTO';
 import { tokens } from '../../../../theme/theme';
 import { useAuth } from '../../../../shared/contexts/AuthContext';
 import dayjs from 'dayjs';
-import 'dayjs/locale/pt-br'; 
+import 'dayjs/locale/pt-br';
 
 interface UserThesisTableProps {
     theses: Thesis[];
@@ -35,7 +35,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
     const colors = tokens.colors;
     const { user } = useAuth();
 
-    // Verificar se o usuário é professor
+
     const isProfessor = user?.roles?.some(role => role.name === 'PROFESSOR');
 
 
@@ -91,13 +91,12 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
         return user.name;
     };
 
-    // Função para truncar o título com elipsis
+
     const truncateTitle = (title: string, maxLength: number = 60) => {
         if (title.length <= maxLength) return title;
         return `${title.substring(0, maxLength)}...`;
     };
 
-    // Função para obter o chip de status
     const getStatusChip = (status: string) => {
         let label, color;
 
@@ -122,7 +121,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                 label={label}
                 size="small"
                 sx={{
-                    backgroundColor: `${color}20`, // 20% de opacidade
+                    backgroundColor: `${color}20`,
                     color: color,
                     fontWeight: 500,
                     fontSize: '0.75rem',
@@ -147,7 +146,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
             height: 'calc(100vh - 390px)',
             position: 'relative'
         }}>
-            {/* Overlay de carregamento */}
+
             {loading && (
                 <Box
                     position="absolute"
@@ -166,7 +165,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                 </Box>
             )}
 
-            {/* Container da tabela */}
+
             <Box sx={{ flexGrow: 1, overflow: 'auto', mb: 2 }}>
                 <TableContainer
                     component={Paper}
@@ -188,7 +187,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                         top: 0,
                                         zIndex: 1,
                                         py: 1.5,
-                                        width: '30%' // Largura fixa para o título
+                                        width: '30%'
                                     }}
                                 >
                                     <TableSortLabel
@@ -200,7 +199,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                     </TableSortLabel>
                                 </TableCell>
 
-                                {/* Coluna de Autor - só aparece se for professor */}
+
                                 {isProfessor && (
                                     <TableCell
                                         sx={{
@@ -222,7 +221,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                     </TableCell>
                                 )}
 
-                                {/* Coluna de Orientador - não aparece se for professor e orientation=ADVISOR */}
+
                                 {!(isProfessor && orientation === 'ADVISOR') && (
                                     <TableCell
                                         sx={{
@@ -245,7 +244,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                     </TableCell>
                                 )}
 
-                                {/* Coluna de Co-orientador - não aparece se for professor e orientation=COADVISOR */}
+
                                 {!(isProfessor && orientation === 'COADVISOR') && (
                                     <TableCell
                                         sx={{
@@ -280,7 +279,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                     </TableSortLabel>
                                 </TableCell>
 
-                                {/* Nova coluna de Situação */}
+
                                 <TableCell
                                     sx={{
                                         backgroundColor: colors.bg.secondary,
@@ -289,7 +288,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                         top: 0,
                                         zIndex: 1,
                                         py: 1.5,
-                                        width: '100px' // Largura fixa para o status
+                                        width: '100px'
                                     }}
                                 >
                                     Situação
@@ -313,31 +312,30 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                         sx={{
                                             color: colors.text.primary,
                                             py: 1,
-                                            maxWidth: '300px', // Largura máxima
+                                            maxWidth: '300px',
                                             overflow: 'hidden',
                                             textOverflow: 'ellipsis',
                                             whiteSpace: 'nowrap'
                                         }}
-                                        title={thesis.title} // Tooltip com o título completo
+                                        title={thesis.title}
                                     >
                                         {truncateTitle(thesis.title)}
                                     </TableCell>
 
-                                    {/* Coluna de Autor - só aparece se for professor */}
+
                                     {isProfessor && (
                                         <TableCell sx={{ color: colors.text.primary, py: 1 }}>
                                             {formatName(thesis.author)}
                                         </TableCell>
                                     )}
 
-                                    {/* Coluna de Orientador - não aparece se for professor e orientation=ADVISOR */}
+
                                     {!(isProfessor && orientation === 'ADVISOR') && (
                                         <TableCell sx={{ color: colors.text.primary, py: 1 }}>
                                             {formatName(thesis.advisor)}
                                         </TableCell>
                                     )}
 
-                                    {/* Coluna de Co-orientador - não aparece se for professor e orientation=COADVISOR */}
                                     {!(isProfessor && orientation === 'COADVISOR') && (
                                         <TableCell sx={{ color: colors.text.primary, py: 1 }}>
                                             {thesis.co_advisor ? formatName(thesis.co_advisor) : '-'}
@@ -348,7 +346,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                                         {formatDate(thesis.defense_date)}
                                     </TableCell>
 
-                                    {/* Coluna de Situação */}
+
                                     <TableCell sx={{ py: 1 }}>
                                         {getStatusChip(thesis.status)}
                                     </TableCell>
@@ -359,7 +357,7 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                 </TableContainer>
             </Box>
 
-            {/* Paginação */}
+
             {totalPages > 1 && (
                 <Box sx={{
                     display: 'flex',

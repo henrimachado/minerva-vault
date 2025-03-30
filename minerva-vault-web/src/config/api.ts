@@ -9,7 +9,7 @@ const api: AxiosInstance = axios.create({
     },
 });
 
-// Interceptador para envio do token
+
 api.interceptors.request.use((config) => {
     const token = localStorage.getItem(ACCESS_TOKEN_KEY);
     if (token) {
@@ -22,7 +22,7 @@ api.interceptors.request.use((config) => {
 })
 
 
-// Refresh token
+
 api.interceptors.response.use(
     (response) => response,
     async (error) => {

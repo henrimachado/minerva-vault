@@ -1,5 +1,11 @@
 import api from "../../../config/api";
-import { BaseUserWithRole, ChangePasswordData, CreateUser, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
+import {
+    BaseUserWithRole,
+    ChangePasswordData,
+    CreateUser,
+    UserProfileResponse,
+    UserRole,
+} from "../dto/userProfileDTO";
 
 export default class UserProfileService {
     private static readonly USER_URI = "/user";
@@ -18,7 +24,9 @@ export default class UserProfileService {
 
                 throw new Error(JSON.stringify(errorData));
             }
-            throw new Error("Falha ao recuperar informações do usuário. Tente novamente mais tarde.");
+            throw new Error(
+                "Falha ao recuperar informações do usuário. Tente novamente mais tarde."
+            );
         }
     }
 
@@ -36,19 +44,19 @@ export default class UserProfileService {
 
                 throw new Error(JSON.stringify(errorData));
             }
-            throw new Error("Falha ao recuperar informações de papéis de usuário. Tente novamente mais tarde.");
+            throw new Error(
+                "Falha ao recuperar informações de papéis de usuário. Tente novamente mais tarde."
+            );
         }
     }
 
     public static async createUser(userFormData: FormData): Promise<void> {
         try {
-
             await api.post(`${this.USER_URI}/`, userFormData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                    "Content-Type": "multipart/form-data",
+                },
             });
-
         } catch (error: any) {
             if (error.response && error.response.data) {
                 const errorData = error.response.data;
@@ -63,12 +71,15 @@ export default class UserProfileService {
         }
     }
 
-    public static async updateUser(userFormData: FormData, user_id: string): Promise<void> {
+    public static async updateUser(
+        userFormData: FormData,
+        user_id: string
+    ): Promise<void> {
         try {
             await api.patch(`${this.USER_URI}/${user_id}/`, userFormData, {
                 headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
+                    "Content-Type": "multipart/form-data",
+                },
             });
         } catch (error: any) {
             if (error.response && error.response.data) {
@@ -80,14 +91,17 @@ export default class UserProfileService {
 
                 throw new Error(JSON.stringify(errorData));
             }
-            throw new Error("Falha ao atualizar usuário. Tente novamente mais tarde.");
+            throw new Error(
+                "Falha ao atualizar usuário. Tente novamente mais tarde."
+            );
         }
     }
 
-    public static async changePassword(passwordData: ChangePasswordData): Promise<void> {
+    public static async changePassword(
+        passwordData: ChangePasswordData
+    ): Promise<void> {
         try {
-            await api.patch(`${this.USER_URI}/change_password/`, passwordData, {
-            });
+            await api.patch(`${this.USER_URI}/change_password/`, passwordData, {});
         } catch (error: any) {
             if (error.response && error.response.data) {
                 const errorData = error.response.data;
@@ -99,12 +113,15 @@ export default class UserProfileService {
                 throw new Error(JSON.stringify(errorData));
             }
 
-            throw new Error("Falha ao alterar senha. Verifique suas credenciais e tente novamente.");
+            throw new Error(
+                "Falha ao alterar senha. Verifique suas credenciais e tente novamente."
+            );
         }
     }
 
-
-    public static async getUsersByRoleId(role_id: string): Promise<Array<BaseUserWithRole>> {
+    public static async getUsersByRoleId(
+        role_id: string
+    ): Promise<Array<BaseUserWithRole>> {
         try {
             const { data } = await api.get(`${this.USER_URI}/?role_id=${role_id}`);
             return data;
@@ -118,7 +135,9 @@ export default class UserProfileService {
 
                 throw new Error(JSON.stringify(errorData));
             }
-            throw new Error("Falha ao recuperar usuários por papel. Tente novamente mais tarde.");
+            throw new Error(
+                "Falha ao recuperar usuários por papel. Tente novamente mais tarde."
+            );
         }
     }
 }

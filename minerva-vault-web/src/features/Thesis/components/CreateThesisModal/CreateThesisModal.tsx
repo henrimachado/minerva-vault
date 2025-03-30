@@ -39,8 +39,8 @@ interface UserOption {
 
 interface CreateThesisModalProps {
     open: boolean;
-    onClose: () => void;
-    onSuccess?: () => void;
+    onClose: (closeModal: boolean) => void;
+    onSuccess: () => void;
 }
 
 const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
@@ -54,10 +54,8 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
     const { getUsersByRoleId, getUserRoles } = UserProfileController();
     const { createThesis } = ThesisController();
 
-    // Verificar se o usuário é professor
     const isProfessor = user?.roles?.some(role => role.name === 'PROFESSOR');
 
-    // Estados
     const [loading, setLoading] = useState(false);
     const [students, setStudents] = useState<UserOption[]>([]);
     const [professors, setProfessors] = useState<UserOption[]>([]);
@@ -133,7 +131,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
             pdf_file: null
         });
         setErrors({});
-        onClose();
+        onClose(false);
     }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -235,7 +233,8 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
         try {
 
             await createThesis(formData);
-            onClose();
+            await onSuccess();
+            onClose(false);
         } catch (error) {
             console.error('Erro ao criar monografia:', error);
         } finally {
@@ -253,7 +252,12 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
     return (
         <Dialog
             open={open}
-            onClose={loading ? undefined : onClose}
+            onClose={(e, reason) => {
+                if (reason === 'backdropClick' || reason === 'escapeKeyDown') {
+                    return;
+                }
+                onClose(false);
+            }}
             fullWidth
             maxWidth="md"
             slotProps={{
@@ -281,7 +285,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
             <form onSubmit={handleSubmit}>
                 <DialogContent sx={{ bgcolor: colors.bg.secondary, py: 3 }}>
                     <Grid container spacing={2}>
-                        {/* Título - full width */}
+
                         <Grid size={12}>
                             <TextField
                                 name="title"
@@ -307,7 +311,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                             />
                         </Grid>
 
-                        {/* Autor e Data na mesma linha */}
+
                         <Grid size={6}>
                             <Autocomplete
                                 id="author-select"
@@ -368,7 +372,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                             </LocalizationProvider>
                         </Grid>
 
-                        {/* Orientador e Coorientador na mesma linha */}
+
                         <Grid size={6}>
                             <Autocomplete
                                 id="advisor-select"
@@ -429,7 +433,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                             />
                         </Grid>
 
-                        {/* Palavras-chave - full width */}
+
                         <Grid size={12}>
                             <TextField
                                 name="keywords"
@@ -455,7 +459,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                             />
                         </Grid>
 
-                        {/* Resumo - full width */}
+
                         <Grid size={12}>
                             <TextField
                                 name="abstract"
@@ -483,7 +487,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                             />
                         </Grid>
 
-                        {/* Upload de PDF - full width */}
+
                         <Grid size={12}>
                             <Box
                                 sx={{

@@ -1,9 +1,15 @@
 import AuthService from "../service/AuthService";
 import { LoginDTO, AuthTokensResponse } from "../dto/authDTO";
-import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY, USER_PROFILE_KEY } from "../../../config/constants";
+import {
+    ACCESS_TOKEN_KEY,
+    REFRESH_TOKEN_KEY,
+    USER_PROFILE_KEY,
+} from "../../../config/constants";
 
 export default class AuthManager {
-    public static async login(credentials: LoginDTO): Promise<AuthTokensResponse> {
+    public static async login(
+        credentials: LoginDTO
+    ): Promise<AuthTokensResponse> {
         const response = await AuthService.login(credentials);
 
         if (response.access && response.refresh) {
@@ -14,7 +20,9 @@ export default class AuthManager {
         return response;
     }
 
-    public static async refreshToken(refresh: string): Promise<{ access: string }> {
+    public static async refreshToken(
+        refresh: string
+    ): Promise<{ access: string }> {
         const response = await AuthService.refreshToken(refresh);
 
         localStorage.setItem(ACCESS_TOKEN_KEY, response.access);
@@ -30,6 +38,4 @@ export default class AuthManager {
     public static isAuthenticated(): boolean {
         return !!localStorage.getItem(ACCESS_TOKEN_KEY);
     }
-
-
 }

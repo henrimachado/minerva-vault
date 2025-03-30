@@ -1,6 +1,6 @@
 import ThesisService from '../service/ThesisService';
 import { ThesisFilters, ThesisListResponse, ThesisDetail } from '../dto/thesisDTO';
-import { CreateThesisFormData } from '../dto/createThesisDTO';
+import { CreateThesisFormData, UpdateThesisFormData } from '../dto/createThesisDTO';
 
 export default class ThesisManager {
     public static async listTheses(filters: ThesisFilters): Promise<ThesisListResponse> {
@@ -33,5 +33,48 @@ export default class ThesisManager {
         }
 
         await ThesisService.createThesis(thesisFormData);
+    }
+
+    static buildThesisFormData(updatedThesis: Partial<UpdateThesisFormData>): FormData {
+        const thesisFormData = new FormData();
+
+        const stringFields: (keyof UpdateThesisFormData)[] = ['title', 'abstract', 'keywords', 'defense_date', 'status'];
+        stringFields.forEach(field => {
+            const value = updatedThesis[field];
+            if (value !== undefined && typeof value === 'string') {
+                thesisFormData.append(field, value);
+            }
+        });
+
+        if (updatedThesis.author_id !== undefined && typeof updatedThesis.author_id === 'string') {
+            thesisFormData.append('author_id', updatedThesis.author_id);
+        }
+
+        if (updatedThesis.advisor_id !== undefined && typeof updatedThesis.advisor_id === 'string') {
+            thesisFormData.append('advisor_id', updatedThesis.advisor_id);
+        }
+
+
+        if ('co_advisor_id' in updatedThesis && updatedThesis.co_advisor_id !== undefined) {
+            thesisFormData.append('co_advisor_id',
+                updatedThesis.co_advisor_id === null ? 'null' : String(updatedThesis.co_advisor_id)
+            );
+        }
+        if (updatedThesis.pdf_file instanceof File) {
+            thesisFormData.append('pdf_file', updatedThesis.pdf_file);
+        }
+
+        return thesisFormData;
+    };
+
+
+    public static async updateThesis(thesis_id: string, updatedThesis: UpdateThesisFormData): Promise<void> {
+        const formData = this.buildThesisFormData(updatedThesis);
+
+        await ThesisService.updateThesis(thesis_id, formData);
+    }
+
+    public static async deleteThesis(id: string): Promise<void> {
+        await ThesisService.deleteThesis(id);
     }
 }
