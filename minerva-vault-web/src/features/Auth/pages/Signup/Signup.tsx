@@ -27,6 +27,7 @@ import ClearIcon from '@mui/icons-material/Clear';
 import { CreateUser, UserRole } from '../../../UserProfile/dto/userProfileDTO';
 import UserController from '../../../UserProfile/controller/UserProfileController';
 import { tokens } from '../../../../theme/theme';
+import { userRoleEnum } from '../../../UserProfile/utils/userRoleEnum';
 
 interface FormErrors {
     username?: string;
@@ -38,11 +39,6 @@ interface FormErrors {
     role_id?: string;
     avatar?: string;
     general?: string;
-}
-
-const userRoleEnum: Record<string, string> = {
-    'STUDENT': 'Estudante',
-    'PROFESSOR': 'Professor',
 }
 
 function SignUp() {

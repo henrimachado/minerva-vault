@@ -24,6 +24,8 @@ import { useAuth } from '../../../shared/contexts/AuthContext';
 import { UpdateUserProfileDTO } from '../dto/userProfileDTO';
 import UserController from '../controller/UserProfileController';
 import { tokens } from '../../../theme/theme';
+import { userRoleEnum } from '../utils/userRoleEnum';
+import ChangePasswordModal from '../components/ChangePasswordModal/ChangePasswordModal';
 
 interface FormErrors {
     first_name?: string;
@@ -49,6 +51,8 @@ function UserProfilePage() {
 
     const [hasChanges, setHasChanges] = useState(false);
     const [errors, setErrors] = useState<FormErrors>({});
+
+    const [changePasswordModal, setChangePasswordModal] = useState(false);
 
 
     useEffect(() => {
@@ -110,23 +114,23 @@ function UserProfilePage() {
     const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
-        
+
             if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
                 setErrors({ ...errors, avatar: 'Formato de imagem inválido. Use JPG, PNG ou GIF.' });
                 return;
             }
-        
+
             if (file.size > 5 * 1024 * 1024) {
                 setErrors({ ...errors, avatar: 'A imagem deve ter no máximo 5MB.' });
                 return;
             }
-        
+
             setAvatarFile(file);
             setAvatarPreview(URL.createObjectURL(file));
             setAvatarDeleted(false);
             setErrors({ ...errors, avatar: undefined });
         }
-        };
+    };
 
     const handleRemoveAvatar = () => {
         setAvatarPreview(null);
@@ -529,7 +533,7 @@ function UserProfilePage() {
                             Funções
                         </Typography>
                         <Typography variant="body1">
-                            {user.roles.map(role => role.name).join(', ')}
+                            {user.roles.map(role => userRoleEnum[role.name] || role.name).join(', ')}
                         </Typography>
                     </Grid>
                 </Grid>
@@ -546,7 +550,7 @@ function UserProfilePage() {
                 <Button
                     variant="contained"
                     startIcon={<LockIcon />}
-                    onClick={() => {/* Implementar lógica de troca de senha */ }}
+                    onClick={() => setChangePasswordModal(true)}
                     sx={{
                         backgroundColor: tokens.colors.action.primary,
                         '&:hover': {
@@ -556,6 +560,11 @@ function UserProfilePage() {
                 >
                     Alterar Senha
                 </Button>
+
+                <ChangePasswordModal
+                    openModal={changePasswordModal}
+                    setOpenModal={setChangePasswordModal}
+                />
             </Paper>
         </Container>
     );

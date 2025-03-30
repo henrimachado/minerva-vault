@@ -21,22 +21,6 @@ class UserDomain:
     def _can_update_user(self, requesting_user: User, user_id: str) -> bool:
         is_admin = any(role.role.name == 'ADMIN' for role in requesting_user.user_roles.all())
         return str(requesting_user.id) == user_id or is_admin
-
-    def _can_change_password(self, requesting_user: User, user_id: str, data: dict) -> bool:
-        is_admin = any(role.role.name == 'ADMIN' for role in requesting_user.user_roles.all())
-        is_same_user = str(requesting_user.id) == user_id
-        
-        if is_admin:
-            return True
-        
-        if is_same_user:
-            if not data.get('current_password'):
-                raise ValidationError("Senha atual é obrigatória")
-            if not self.service.check_password(requesting_user, data['current_password']):
-                raise ValidationError("Senha atual incorreta")
-            return True
-    
-        return False
     
     def _validate_password_rules(self, user: User, data: dict) -> None:
         if data['current_password'] == data['new_password']:
@@ -85,18 +69,17 @@ class UserDomain:
         return self._serialize_user(updated_user, request)
 
     
-    def change_password(self, requesting_user: User, user_id: str | None, data: dict, request=None) -> dict:
-        user_to_update = self.service.get_user_by_id(user_id) if user_id else requesting_user
+    def change_password(self, user: User,  data: dict, request=None) -> dict:
+
+        if not self.service.check_password(user, data['current_password']):
+                raise ValidationError("Senha atual incorreta")
         
-        if not self._can_change_password(requesting_user, user_id, data):
-            raise PermissionDenied("Você não tem permissão para alterar a senha deste usuário")
-        
-        self._validate_password_rules(user_to_update, data)
+        self._validate_password_rules(user, data)
 
         with transaction.atomic():
-            self.service.add_to_password_history(user_to_update, data['new_password'])
-            updated_user = self.service.update_password(user_to_update, data['new_password'])
-            self.service.limit_password_history(user_to_update)
+            self.service.add_to_password_history(user, data['new_password'])
+            updated_user = self.service.update_password(user, data['new_password'])
+            self.service.limit_password_history(user)
         
         return self._serialize_user(updated_user, request)
 
@@ -110,8 +93,11 @@ class UserDomain:
         if self.service.user_exists_by_email(data['email']):
             raise ConflictError("E-mail já cadastrado")
         
-        user = self.service.create_user(data)
-        return self._serialize_user(user)
+        with transaction.atomic():
+            user = self.service.create_user(data)
+            self.service.add_to_password_history(user, data['password'])
+            self.service.limit_password_history(user)
+            return self._serialize_user(user)
     
     def list_active_users(self, role_id: str, request=None) -> list[dict]:
         self.role_service.get_role_by_id(role_id)

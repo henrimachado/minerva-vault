@@ -1,5 +1,5 @@
 import UserProfileService from "../service/UserProfileService";
-import { CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
+import { ChangePasswordData, CreateUser, UpdateUserProfileDTO, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
 
 export default class UserProfileManager {
     public static async getLoggedUser(): Promise<UserProfileResponse> {
@@ -38,11 +38,11 @@ export default class UserProfileManager {
         const userFormData = new FormData();
 
         if (user.first_name !== undefined) {
-            userFormData.append('first_name', user.first_name);
+            userFormData.append('first_name', `${user.first_name}`);
         }
 
         if (user.last_name !== undefined) {
-            userFormData.append('last_name', user.last_name);
+            userFormData.append('last_name', `${user.last_name}`);
         }
 
         if (user.avatar === null) {
@@ -51,11 +51,10 @@ export default class UserProfileManager {
             userFormData.append('avatar', user.avatar);
         }
 
-        console.log('FormData entries:');
-        for (let pair of userFormData.entries()) {
-            console.log(pair[0] + ': ' + (pair[1] instanceof File ? 'File object' : pair[1]));
-        }
-
         await UserProfileService.updateUser(userFormData, user_id);
+    }
+
+    public static async changePassword(passwordData: ChangePasswordData): Promise<void> {
+        await UserProfileService.changePassword(passwordData);
     }
 }

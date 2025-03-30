@@ -50,8 +50,6 @@ class ThesisRepository:
             'author', 'advisor', 'co_advisor'
         )
         
-        print(query)
-        
         if filters:
             if filters.get('title'):
                 query = query.filter(title__icontains=filters['title'])

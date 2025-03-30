@@ -1,5 +1,5 @@
 import api from "../../../config/api";
-import { CreateUser, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
+import { ChangePasswordData, CreateUser, UserProfileResponse, UserRole } from "../dto/userProfileDTO";
 
 export default class UserProfileService {
     private static readonly USER_URI = "/user/";
@@ -45,6 +45,15 @@ export default class UserProfileService {
             });
         } catch (error: any) {
             throw new Error("Falha ao atualizar usuário");
+        }
+    }
+
+    public static async changePassword(passwordData: ChangePasswordData): Promise<void> {
+        try {
+            await api.patch(`${this.USER_URI}change_password/`, passwordData, {
+            });
+        } catch (error: any) {
+            throw new Error("Falha ao atualizar senha");
         }
     }
 }

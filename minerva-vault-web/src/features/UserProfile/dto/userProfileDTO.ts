@@ -39,3 +39,9 @@ export interface UpdateUserProfileDTO {
     last_name?: string;
     avatar?: File | null;
 }
+
+export interface ChangePasswordData {
+    current_password: string;
+    new_password: string;
+    password_confirmation: string;
+}

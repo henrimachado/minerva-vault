@@ -206,7 +206,7 @@ class UserController(ViewSet):
         if 'avatar' in request.FILES:
             data['avatar'] = request.FILES['avatar']
         
-        validator = CreateUserValidator(data=request.data)
+        validator = CreateUserValidator(data=data)
         if not validator.is_valid():
             return Response(
                 validator.errors, 
@@ -284,8 +284,10 @@ class UserController(ViewSet):
     )
     @audit_log(action='PATCH', module='USERS', table_name='users')
     def partial_update(self, request, pk=None):
-        data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
-
+        # data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
+        data = request.data.copy() 
+        data['user_id'] = str(pk)
+        
         if 'avatar' in request.FILES:
             data['avatar'] = request.FILES['avatar']
         elif 'avatar' in data:
@@ -296,6 +298,15 @@ class UserController(ViewSet):
             if avatar_value == 'null' or avatar_value == '':
                 data['remove_avatar'] = True
                 data.pop('avatar')
+                
+        for field in ['first_name', 'last_name']:
+            if field in data:
+                value = data[field]
+                if isinstance(value, list) and len(value) > 0:
+                    data[field] = value[0]
+                if not isinstance(data[field], str):
+                    data[field] = str(data[field])
+
     
         validator = UpdateUserValidator(data=data)
         
@@ -372,11 +383,10 @@ class UserController(ViewSet):
         tags=['Usuários']
     )
     @audit_log(action='PATCH', module='USERS', table_name='users')       
-    @action(detail=False, methods=['post'], parser_classes=[JSONParser])
-    def change_password(self, request, pk:None):
-        data = {**request.data, 'user_id': str(pk)} if request.data else {'user_id': str(pk)}
+    @action(detail=False, methods=['patch'], parser_classes=[JSONParser])
+    def change_password(self, request):
         
-        validator = ChangePasswordValidator(data=data)
+        validator = ChangePasswordValidator(data=request.data)
         
         if not validator.is_valid():
             return Response(
@@ -386,8 +396,7 @@ class UserController(ViewSet):
 
         try:
             result = self.domain.change_password(
-                requesting_user=request.user,
-                user_id= str(pk),
+                user=request.user,
                 data=validator.validated_data,
                 request=request
             )

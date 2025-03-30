@@ -136,8 +136,6 @@ class ThesisDomain:
         return serializer.data
             
     def delete_thesis(self, thesis_id: str, user: User) -> None:
-        print(user)
-        print(thesis_id)
         thesis = self.service.get_thesis_by_id(thesis_id)
         
         user_roles = [role.role.name for role in user.user_roles.all()]
