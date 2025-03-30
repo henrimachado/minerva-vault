@@ -6,7 +6,6 @@ export default class ThesisService {
 
     public static async listTheses(filters: ThesisFilters): Promise<ThesisListResponse> {
         try {
-            // Construir query params
             const params = new URLSearchParams();
             Object.entries(filters).forEach(([key, value]) => {
                 if (value !== undefined && value !== '') {
@@ -21,6 +20,25 @@ export default class ThesisService {
                 throw new Error(error.response.data.detail);
             }
             throw new Error('Falha ao buscar teses');
+        }
+    }
+
+    public static async getUserThesis(filters: ThesisFilters): Promise<ThesisListResponse> {
+        try {
+            const params = new URLSearchParams();
+            Object.entries(filters).forEach(([key, value]) => {
+                if (value !== undefined && value !== '') {
+                    params.append(key, String(value));
+                }
+            });
+
+            const { data } = await api.get(`${this.THESIS_URI}/me?${params.toString()}`);
+            return data;
+        } catch (error: any) {
+            if (error.response && error.response.data && error.response.data.detail) {
+                throw new Error(error.response.data.detail);
+            }
+            throw new Error('Falha ao buscar teses do usuário');
         }
     }
 

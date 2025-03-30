@@ -9,4 +9,8 @@ export default class ThesisManager {
     public static async getThesisById(id: string): Promise<ThesisDetail> {
         return await ThesisService.getThesisById(id);
     }
+
+    public static async getUserThesis(filters: ThesisFilters): Promise<ThesisListResponse> {
+        return await ThesisService.getUserThesis(filters);
+    }
 }

@@ -172,9 +172,16 @@ class ThesisController(ViewSet):
     @audit_log(action='GET', module='THESIS', table_name='thesis')    
     @action(detail=False, methods=['get'])
     def me(self, request):
+        validator = ListThesisValidator(data=request.query_params)
+        if not validator.is_valid():
+            return Response(
+                validator.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         try:
             result = self.domain.list_my_thesis(
                 user=request.user,
+                filters=validator.validated_data,
                 request=request
             )
             return Response(result, status=status.HTTP_200_OK)

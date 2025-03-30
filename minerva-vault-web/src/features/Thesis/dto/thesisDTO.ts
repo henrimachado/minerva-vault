@@ -29,6 +29,7 @@ export interface ThesisFilters {
     context?: string;
     order_by?: OrderByOption;
     page?: number;
+    orientation?: 'ADVISOR' | 'COADVISOR';
 }
 
 export type OrderByOption =

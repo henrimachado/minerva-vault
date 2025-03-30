@@ -1,14 +1,19 @@
 import React from 'react';
 import { Box, Chip } from '@mui/material';
 import { ThesisFilters } from '../../dto/thesisDTO';
-import { tokens } from '../../../../theme/theme'; 
+import { tokens } from '../../../../theme/theme';
 
 interface AppliedFiltersProps {
     filters: ThesisFilters;
     onRemoveFilter: (key: keyof ThesisFilters) => void;
+    hiddenFilters?: Array<keyof ThesisFilters>; // Nova prop opcional
 }
 
-const AppliedFilters: React.FC<AppliedFiltersProps> = ({ filters, onRemoveFilter }) => {
+const AppliedFilters: React.FC<AppliedFiltersProps> = ({
+    filters,
+    onRemoveFilter,
+    hiddenFilters = [] // Valor padrão é um array vazio
+}) => {
     const colors = tokens.colors;
 
     const getFilterLabel = (key: string, value: any): string => {
@@ -27,6 +32,8 @@ const AppliedFilters: React.FC<AppliedFiltersProps> = ({ filters, onRemoveFilter
                 return `Contexto: ${value}`;
             case 'order_by':
                 return `Ordenação: ${getOrderByLabel(value)}`;
+            case 'orientation':
+                return `Orientação: ${value === 'ADVISOR' ? 'Orientador' : 'Co-orientador'}`;
             default:
                 return `${key}: ${value}`;
         }
@@ -55,8 +62,19 @@ const AppliedFilters: React.FC<AppliedFiltersProps> = ({ filters, onRemoveFilter
         }
     };
 
+    // Filtrar entradas com base em hiddenFilters
     const filterEntries = Object.entries(filters).filter(([key, value]) => {
-        return value !== undefined && value !== '' && key !== 'page';
+        // Verificar se o filtro deve ser exibido
+        const shouldShow =
+            // Tem valor definido
+            value !== undefined &&
+            value !== '' &&
+            // Não é a página
+            key !== 'page' &&
+            // Não está na lista de filtros ocultos
+            !hiddenFilters.includes(key as keyof ThesisFilters);
+
+        return shouldShow;
     });
 
     if (filterEntries.length === 0) {

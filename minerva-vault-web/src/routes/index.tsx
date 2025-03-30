@@ -9,6 +9,7 @@ import HomePage from '../features/Home/pages/HomePage'; // Importe a nova págin
 import ThesisListPage from '../features/Thesis/pages/ThesisListPage';
 import UserProfilePage from '../features/UserProfile/pages/UserProfilePage';
 import SignUp from '../features/Auth/pages/Signup/Signup';
+import UserThesisListPage from '../features/Thesis/pages/UserThesisListPage';
 
 function AppRoutes() {
     return (
@@ -51,6 +52,14 @@ function AppRoutes() {
                 element={
                     <PrivateRoute>
                         <UserProfilePage />
+                    </PrivateRoute>
+                }
+            />
+            <Route
+                path="/minhas-monografias"
+                element={
+                    <PrivateRoute>
+                        <UserThesisListPage />
                     </PrivateRoute>
                 }
             />

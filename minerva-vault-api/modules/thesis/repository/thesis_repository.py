@@ -23,17 +23,63 @@ class ThesisRepository:
             'author', 'advisor', 'co_advisor', 'created_by'
         ).get(id=thesis_id)
         
-    def list_my_thesis(self, user: User, is_student: bool, page: int = 1) -> dict:
+    def list_my_thesis(self, user: User, is_student: bool, is_professor: bool, orientation: str = None, filters: dict = None, page: int = 1) -> dict:
         query = Thesis.objects.select_related(
             'author', 'advisor', 'co_advisor'
         )
         
+        # Aplicar filtro baseado no papel do usuário
         if is_student:
-            query= query.filter(author=user)
-        else:
-            query = query.filter(Q(advisor=user) | Q(co_advisor=user))
+            query = query.filter(author=user)
+        elif is_professor:
+            # Se for professor e tiver filtro de orientação
+            if orientation == "ADVISOR":
+                query = query.filter(advisor=user)
+            elif orientation == "COADVISOR":
+                query = query.filter(co_advisor=user)
+            else:
+                # Comportamento padrão: mostrar ambos
+                query = query.filter(Q(advisor=user) | Q(co_advisor=user))
+        
+        # Aplicar os mesmos filtros da rota list
+        if filters:
+            if filters.get('title'):
+                query = query.filter(title__icontains=filters['title'])
             
-        query = query.order_by('-created_at')
+            if filters.get('author_name'):
+                query = query.filter(
+                    Q(author__first_name__icontains=filters['author_name']) |
+                    Q(author__last_name__icontains=filters['author_name'])
+                )
+                 
+            if filters.get('advisor_name'):
+                query = query.filter(
+                    Q(advisor__first_name__icontains=filters['advisor_name']) |
+                    Q(advisor__last_name__icontains=filters['advisor_name'])
+                )
+                
+            if filters.get('co_advisor_name'):
+                query = query.filter(
+                    Q(co_advisor__first_name__icontains=filters['co_advisor_name']) |
+                    Q(co_advisor__last_name__icontains=filters['co_advisor_name'])
+                )
+            
+            if filters.get('defense_date'):
+                query = query.filter(defense_date=filters['defense_date'])
+            
+            if filters.get('context'):
+                context = filters['context']
+                query = query.filter(
+                    Q(title__icontains=context) |
+                    Q(abstract__icontains=context) |
+                    Q(keywords__icontains=context)
+                )
+            
+            if filters.get('order_by'):
+                order_by = self.ORDERING_MAPPING[filters['order_by']]
+                if order_by:
+                    query = query.order_by(order_by)
+        
             
         paginator = Paginator(query, 10)
         page_obj = paginator.get_page(page)
@@ -44,6 +90,7 @@ class ThesisRepository:
             'pages': paginator.num_pages,
             'current_page': page
         }
+     
         
     def list_thesis(self, filters: dict = None, page: int = 1) -> dict:
         query = Thesis.objects.filter(status = 'APPROVED').select_related(

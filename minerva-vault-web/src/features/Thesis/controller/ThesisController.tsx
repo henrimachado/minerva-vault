@@ -27,8 +27,19 @@ export default function ThesisController() {
         }
     }
 
+    async function getUserThesis(filters: ThesisFilters): Promise<ThesisListResponse> {
+        try {
+            const result = await ThesisManager.getUserThesis(filters);
+            return result;
+        } catch (error) {
+            const errorMessage = error instanceof Error ? error.message : 'Falha ao buscar teses do usuário';
+            notification.error(errorMessage);
+            throw error;
+        }
+    }
     return {
         listTheses,
-        getThesisById
+        getThesisById,
+        getUserThesis,
     };
 }

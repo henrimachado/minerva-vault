@@ -14,8 +14,8 @@ class ThesisService:
         except Thesis.DoesNotExist:
             raise NotFound("Tese não encontrada")
         
-    def list_my_thesis(self, user: User, is_student: bool, page: int = 1) -> dict:
-        return self.repository.list_my_thesis(user, is_student, page)
+    def list_my_thesis(self, user: User, is_student: bool, is_professor: bool, orientation: str = None, filters: dict = None, page: int = 1) -> dict:
+        return self.repository.list_my_thesis(user, is_student, is_professor, orientation, filters, page)
         
     def list_thesis(self, filters:dict = None, page: int = 1) -> dict:
         return self.repository.list_thesis(filters, page)

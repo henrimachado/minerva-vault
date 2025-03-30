@@ -170,10 +170,10 @@ function ThesisListPage() {
         <Container maxWidth="lg" sx={{ mt: 1, height: 'cal(100vh - 140px)'}}>
             <Box mb={3}>
                 <Typography variant="h4" component="h1" gutterBottom>
-                    Monografias
+                    Trabalhos acadêmicos
                 </Typography>
                 <Typography variant="body1" color={colors.text.secondary}>
-                    Use a barra de pesquisa abaixo para encontrar teses por título, autor, orientador ou palavras-chave.
+                    Use a barra de pesquisa abaixo para encontrar trabalhos acadêmicos por título, autor, orientador ou palavras-chave.
                 </Typography>
             </Box>
 

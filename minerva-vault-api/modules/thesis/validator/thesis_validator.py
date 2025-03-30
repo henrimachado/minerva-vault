@@ -260,6 +260,15 @@ class ListThesisValidator(serializers.Serializer):
         default=1,
     )
     
+    orientation = serializers.ChoiceField(
+        required=False,
+        choices=[
+            'ADVISOR',
+            'COADVISOR'
+        ],
+        default='ADVISOR'
+    )
+    
     
 class DeleteThesisValidator(serializers.Serializer):
     thesis_id = serializers.UUIDField(
