@@ -1,6 +1,7 @@
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework import status
+from rest_framework.exceptions import APIException
 from rest_framework.response import Response
 from rest_framework.viewsets import ViewSet
 from rest_framework.decorators import action
@@ -71,7 +72,19 @@ class AuthController(ViewSet):
                 validator.errors, 
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-        result = self.domain.login(validator.validated_data)
-        return Response(result, status=status.HTTP_200_OK)
+        try:
+            result = self.domain.login(validator.validated_data)
+            return Response(result, status=status.HTTP_200_OK)
+        except APIException as e:
+            error_message = e.detail[0] if isinstance(e.detail, list) else e.detail
+            return Response(
+                {'detail': str(error_message)},
+                status=e.status_code
+            )
+        except Exception as e:
+            return Response(
+                {'detail': 'Erro interno do servidor'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+        
 

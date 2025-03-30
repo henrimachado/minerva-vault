@@ -15,7 +15,7 @@ function PublicRoute({ children }: { children: React.ReactNode }) {
     }
 
     if (isAuthenticated) {
-        return <Navigate to="/thesis" replace />;
+        return <Navigate to="/monografias" replace />;
     }
 
     return <>{children}</>;

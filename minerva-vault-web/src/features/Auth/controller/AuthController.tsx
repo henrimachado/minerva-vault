@@ -4,7 +4,7 @@ import { useNotificationService } from '../../../shared/hooks/useNotificationSer
 
 export default function AuthController() {
     const notification = useNotificationService();
-    async function login(credentials: LoginDTO): Promise<AuthTokensResponse | undefined> {
+    async function login(credentials: LoginDTO): Promise<AuthTokensResponse > {
         try {
             const tokenResponse = await AuthManager.login(credentials);
 
@@ -20,8 +20,7 @@ export default function AuthController() {
         catch (error) {
             const errorMessage = error instanceof Error ? error.message : 'Erro durante o login';
             notification.error(errorMessage);
-            console.log('Erro durante o login', error);
-            return undefined;
+            throw error;
         }
     }
 

@@ -6,8 +6,10 @@ export default class AuthManager {
     public static async login(credentials: LoginDTO): Promise<AuthTokensResponse> {
         const response = await AuthService.login(credentials);
 
-        localStorage.setItem(ACCESS_TOKEN_KEY, response.access);
-        localStorage.setItem(REFRESH_TOKEN_KEY, response.refresh);
+        if (response.access && response.refresh) {
+            localStorage.setItem(ACCESS_TOKEN_KEY, response.access);
+            localStorage.setItem(REFRESH_TOKEN_KEY, response.refresh);
+        }
 
         return response;
     }

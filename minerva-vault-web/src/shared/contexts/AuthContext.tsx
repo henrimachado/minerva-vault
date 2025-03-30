@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { UserProfileResponse } from '../../features/UserProfile/dto/userProfileDTO'; 
-import { ACCESS_TOKEN_KEY } from '../../config/constants';
+import { ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY } from '../../config/constants';
 import UserProfileService from '../../features/UserProfile/service/UserProfileService'; 
 
 interface AuthContextType {
@@ -42,6 +42,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 } catch (error) {
                     // Se falhar, limpa o token
                     localStorage.removeItem(ACCESS_TOKEN_KEY);
+                    localStorage.removeItem(REFRESH_TOKEN_KEY);
                     setUserState(null);
                 }
             }

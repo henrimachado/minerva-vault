@@ -9,7 +9,16 @@ export default class UserProfileService {
             const { data } = await api.get(`${this.USER_URI}me/`);
             return data;
         } catch (error) {
-            throw new Error("Falha ao obter dados do usuário");
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                if (errorData.detail) {
+                    throw new Error(errorData.detail);
+                }
+
+                throw new Error(JSON.stringify(errorData));
+            }
+            throw new Error("Falha ao recuperar informações do usuário. Tente novamente mais tarde.");
         }
     }
 
@@ -18,7 +27,16 @@ export default class UserProfileService {
             const { data } = await api.get(`${this.USER_URI}roles/`);
             return data;
         } catch (error) {
-            throw new Error("Falha ao obter papéis do usuário");
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                if (errorData.detail) {
+                    throw new Error(errorData.detail);
+                }
+
+                throw new Error(JSON.stringify(errorData));
+            }
+            throw new Error("Falha ao recuperar informações de papéis de usuário. Tente novamente mais tarde.");
         }
     }
 
@@ -32,7 +50,16 @@ export default class UserProfileService {
             });
 
         } catch (error: any) {
-            throw new Error("Falha ao criar usuário");
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                if (errorData.detail) {
+                    throw new Error(errorData.detail);
+                }
+
+                throw new Error(JSON.stringify(errorData));
+            }
+            throw new Error("Falha ao criar usuário. Tente novamente mais tarde");
         }
     }
 
@@ -44,7 +71,16 @@ export default class UserProfileService {
                 }
             });
         } catch (error: any) {
-            throw new Error("Falha ao atualizar usuário");
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                if (errorData.detail) {
+                    throw new Error(errorData.detail);
+                }
+
+                throw new Error(JSON.stringify(errorData));
+            }
+            throw new Error("Falha ao atualizar usuário. Tente novamente mais tarde.");
         }
     }
 
@@ -53,7 +89,17 @@ export default class UserProfileService {
             await api.patch(`${this.USER_URI}change_password/`, passwordData, {
             });
         } catch (error: any) {
-            throw new Error("Falha ao atualizar senha");
+            if (error.response && error.response.data) {
+                const errorData = error.response.data;
+
+                if (errorData.detail) {
+                    throw new Error(errorData.detail);
+                }
+
+                throw new Error(JSON.stringify(errorData));
+            }
+
+            throw new Error("Falha ao alterar senha. Verifique suas credenciais e tente novamente.");
         }
     }
 }

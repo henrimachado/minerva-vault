@@ -24,6 +24,7 @@ function Login() {
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
+        e.stopPropagation();
         setLoading(true);
         setError(null);
 
@@ -36,17 +37,16 @@ function Login() {
                 if (userProfile) {
                     setUser(userProfile);
                 }
+
             }
 
-            navigate('/thesis');
         } catch (err: any) {
-            const errorMessage = err.response?.data?.detail ||
-                err.response?.data?.non_field_errors?.join(', ') ||
-                'Falha ao realizar login';
-            setError(errorMessage);
+            return;
         } finally {
             setLoading(false);
         }
+
+
     }
 
     return (
@@ -168,7 +168,7 @@ function Login() {
 
                     <Box sx={{ textAlign: 'center', mt: 1 }}>
                         <Typography variant="caption" color={tokens.colors.text.secondary}>
-                            Não tem uma conta? <RouterLink to="/signup" style={{ color: tokens.colors.action.primary, textDecoration: 'none' }}>Cadastre-se</RouterLink>
+                            Não tem uma conta? <RouterLink to="/cadastro" style={{ color: tokens.colors.action.primary, textDecoration: 'none' }}>Cadastre-se</RouterLink>
                         </Typography>
                     </Box>
                 </Box>
