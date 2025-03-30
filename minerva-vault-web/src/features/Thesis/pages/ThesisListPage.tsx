@@ -225,8 +225,10 @@ function ThesisListPage() {
                     disabled={loading}
                     sx={{
                         backgroundColor: colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
                             backgroundColor: colors.action.hover,
+                            boxShadow: 'none',
                         },
                         minWidth: 100,
                     }}

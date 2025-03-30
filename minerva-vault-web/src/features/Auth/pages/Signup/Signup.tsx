@@ -176,7 +176,6 @@ function SignUp() {
             }
             else throw new Error('Falha ao criar usuário');
         } catch (error: any) {
-            console.error(error);
             setErrors({ general: 'Erro ao processar seu cadastro. Tente novamente.' });
         } finally {
             setLoading(false);
@@ -323,19 +322,6 @@ function SignUp() {
                     >
                         {errors.avatar}
                     </Typography>
-                )}
-
-                {errors.general && (
-                    <Alert
-                        severity="error"
-                        sx={{
-                            mb: 1.5,
-                            py: 0,
-                            '& .MuiAlert-message': { py: 0.5 }
-                        }}
-                    >
-                        {errors.general}
-                    </Alert>
                 )}
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>

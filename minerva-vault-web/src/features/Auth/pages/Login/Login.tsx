@@ -10,7 +10,6 @@ import {
     Avatar,
     Alert,
     CircularProgress,
-    Divider,
 } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import AuthController from "../../controller/AuthController";
@@ -47,10 +46,11 @@ function Login() {
                 }
             }
         } catch (err: any) {
-            return;
+            setError(err.message || "Erro ao fazer login. Tente novamente.");
         } finally {
             setLoading(false);
         }
+
     }
 
     return (
@@ -96,19 +96,6 @@ function Login() {
                         />
                     </Avatar>
                 </Box>
-
-                {error && (
-                    <Alert
-                        severity="error"
-                        sx={{
-                            mb: 1.5,
-                            py: 0,
-                            "& .MuiAlert-message": { py: 0.5 },
-                        }}
-                    >
-                        {error}
-                    </Alert>
-                )}
 
                 <Box component="form" onSubmit={handleSubmit} noValidate>
                     <Typography variant="caption" sx={{ mb: 0.25 }}>

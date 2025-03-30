@@ -10,7 +10,7 @@ export interface UserProfileResponse {
     inactivated_at: string | null;
     avatar_url: string | null;
     roles: Array<UserRole>;
-    password_status?: {
+    password_status: {
         needs_change: boolean;
         days_until_expiration: number;
         last_change: string;

@@ -530,7 +530,7 @@ const ThesisEditModal: React.FC<ThesisEditModalProps> = ({
             <DialogTitle sx={{ color: colors.text.primary, pb: 1 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
-                        {loading ? 'Carregando detalhes da monografia...' : 'Detalhes da Monografia'}
+                        {loading ? 'Carregando detalhes da monografia...' : 'Detalhes da monografia'}
                     </Typography>
                     {!loading && !saving && (
                         <IconButton onClick={() => onClose(false)} size="small">
@@ -573,12 +573,14 @@ const ThesisEditModal: React.FC<ThesisEditModalProps> = ({
                                         }
                                     } : {
                                         backgroundColor: colors.action.primary,
+                                        boxShadow: 'none',
                                         '&:hover': {
+                                            boxShadow: 'none',
                                             backgroundColor: colors.action.hover,
                                         }
                                     }}
                                 >
-                                    {isEditing ? 'Cancelar Edição' : 'Editar Monografia'}
+                                    {isEditing ? 'Cancelar Edição' : 'Editar monografia'}
                                 </Button>
                             )}
                         </Box>
@@ -935,8 +937,10 @@ const ThesisEditModal: React.FC<ThesisEditModalProps> = ({
                                         disabled={downloading || saving}
                                         sx={{
                                             backgroundColor: colors.action.primary,
+                                            boxShadow: 'none',
                                             '&:hover': {
                                                 backgroundColor: colors.action.hover,
+                                                boxShadow: 'none',
                                             },
                                         }}
                                     >
@@ -1071,7 +1075,7 @@ const ThesisEditModal: React.FC<ThesisEditModalProps> = ({
                         sx={{
                             backgroundColor: colors.feedback.error,
                             '&:hover': {
-                                backgroundColor: '#d32f2f',
+                                backgroundColor: colors.feedback.errorDark,
                             }
                         }}
                     >

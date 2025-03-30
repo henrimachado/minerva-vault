@@ -358,8 +358,10 @@ const ChangePasswordModal: React.FC<ChangePasswordModalProps> = ({ openModal, se
                     disabled={!isFormFilled || loading}
                     sx={{
                         backgroundColor: tokens.colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
                             backgroundColor: tokens.colors.action.hover,
+                            boxShadow: 'none',
                         },
                         minWidth: '100px',
                     }}

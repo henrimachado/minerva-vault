@@ -9,11 +9,22 @@ import ThesisListPage from "../features/Thesis/pages/ThesisListPage";
 import UserProfilePage from "../features/UserProfile/pages/UserProfilePage";
 import SignUp from "../features/Auth/pages/Signup/Signup";
 import UserThesisListPage from "../features/Thesis/pages/UserThesisListPage";
+import UpdatePasswordPage from "../features/Auth/pages/UpdatePassword/UpdatePasswordPage";
 
 function AppRoutes() {
     return (
         <Routes>
             <Route path="/" element={<HomePage />} />
+
+
+            <Route
+                path="/atualizar-senha"
+                element={
+                    <PrivateRoute>
+                        <UpdatePasswordPage />
+                    </PrivateRoute>
+                }
+            />
 
             <Route
                 path="/login"

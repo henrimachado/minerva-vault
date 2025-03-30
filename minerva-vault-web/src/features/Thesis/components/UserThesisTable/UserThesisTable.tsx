@@ -103,16 +103,16 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
         switch (status) {
             case 'APPROVED':
                 label = 'Aprovado';
-                color = '#4caf50';
+                color = colors.status.approved;
                 break;
             case 'REJECTED':
                 label = 'Rejeitado';
-                color = '#f44336';
+                color = colors.status.rejected;
                 break;
             case 'PENDING':
             default:
                 label = 'Pendente';
-                color = '#ff9800';
+                color = colors.status.pending;
                 break;
         }
 
@@ -121,8 +121,8 @@ const UserThesisTable: React.FC<UserThesisTableProps> = ({
                 label={label}
                 size="small"
                 sx={{
-                    backgroundColor: `${color}20`,
-                    color: color,
+                    backgroundColor: `${color}90`,
+                    color: colors.text.primary,
                     fontWeight: 500,
                     fontSize: '0.75rem',
                     height: '22px'

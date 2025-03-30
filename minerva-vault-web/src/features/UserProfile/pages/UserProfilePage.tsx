@@ -553,8 +553,10 @@ function UserProfilePage() {
                     onClick={() => setChangePasswordModal(true)}
                     sx={{
                         backgroundColor: tokens.colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
                             backgroundColor: tokens.colors.action.hover,
+                            boxShadow: 'none',
                         },
                     }}
                 >

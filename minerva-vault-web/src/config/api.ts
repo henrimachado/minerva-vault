@@ -28,6 +28,12 @@ api.interceptors.response.use(
     async (error) => {
         const originalRequest = error.config;
 
+        const isLoginRequest = originalRequest.url.includes('/auth/login/');
+
+        if (isLoginRequest) {
+            return Promise.reject(error);
+        }
+
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
             try {
@@ -44,7 +50,9 @@ api.interceptors.response.use(
                     originalRequest.headers.Authorization = `Bearer ${response.data.access}`;
                     return axios(originalRequest);
                 }
+
                 localStorage.removeItem(ACCESS_TOKEN_KEY);
+                localStorage.removeItem(REFRESH_TOKEN_KEY);
                 window.location.href = '/login';
             } catch (refreshError) {
                 localStorage.removeItem(ACCESS_TOKEN_KEY);

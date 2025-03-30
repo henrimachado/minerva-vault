@@ -201,7 +201,9 @@ function UserThesisListPage() {
                     onClick={() => setCreateThesisModalOpen(true)}
                     sx={{
                         backgroundColor: colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
+                            boxShadow: 'none',
                             backgroundColor: colors.action.hover,
                         }
                     }}
@@ -290,7 +292,9 @@ function UserThesisListPage() {
                     disabled={loading}
                     sx={{
                         backgroundColor: colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
+                            boxShadow: 'none',
                             backgroundColor: colors.action.hover,
                         },
                         minWidth: 100,

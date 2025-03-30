@@ -16,6 +16,11 @@ import {
     Grid,
     Divider
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
+import 'dayjs/locale/pt-br';
 import CloseIcon from '@mui/icons-material/Close';
 import { ThesisFilters, OrderByOption } from '../../dto/thesisDTO';
 import { tokens } from '../../../../theme/theme';
@@ -36,7 +41,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
     const colors = tokens.colors;
     const [filters, setFilters] = useState<ThesisFilters>({ ...currentFilters });
 
-
     useEffect(() => {
         if (open) {
             setFilters({ ...currentFilters });
@@ -47,15 +51,24 @@ const FilterModal: React.FC<FilterModalProps> = ({
         setFilters((prev) => ({ ...prev, [field]: value }));
     };
 
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setFilters((prev) => ({ ...prev, defense_date: value }));
+
+    const handleDateChange = (date: any) => {
+        if (date) {
+
+            const formattedDate = date.format('YYYY-MM-DD');
+            setFilters((prev) => ({ ...prev, defense_date: formattedDate }));
+        } else {
+            setFilters((prev) => {
+                const newFilters = { ...prev };
+                delete newFilters.defense_date;
+                return newFilters;
+            });
+        }
     };
 
     const handleSortChange = (event: React.ChangeEvent<{ value: unknown }>) => {
         const value = event.target.value as OrderByOption | '';
         if (value === '') {
-
             const newFilters = { ...filters };
             delete newFilters.order_by;
             setFilters(newFilters);
@@ -65,14 +78,12 @@ const FilterModal: React.FC<FilterModalProps> = ({
     };
 
     const handleApplyFilters = () => {
-
         const cleanedFilters = Object.entries(filters).reduce((acc, [key, value]) => {
             if (value !== undefined && value !== '') {
                 acc[key as keyof ThesisFilters] = value;
             }
             return acc;
         }, {} as ThesisFilters);
-
 
         cleanedFilters.page = 1;
 
@@ -81,7 +92,6 @@ const FilterModal: React.FC<FilterModalProps> = ({
     };
 
     const handleClearFilters = () => {
-
         const clearedFilters = { page: 1 };
         setFilters(clearedFilters);
     };
@@ -199,30 +209,29 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     </Grid>
 
                     <Grid size={{ xs: 12, sm: 6 }}>
-                        <TextField
-                            fullWidth
-                            label="Data de Defesa"
-                            type="date"
-                            value={filters.defense_date || ''}
-                            onChange={handleDateChange}
-                            variant="outlined"
-                            size="small"
-                            slotProps={{
-                                inputLabel: {
-                                    shrink: true,
-                                }
-                            }}
-                            sx={{
-                                '& .MuiOutlinedInput-root': {
-                                    backgroundColor: colors.bg.elevated,
-                                    '& fieldset': { borderColor: colors.border.default },
-                                    '&:hover fieldset': { borderColor: colors.border.focus },
-                                },
-                                '& .MuiInputLabel-root': {
-                                    color: colors.text.secondary,
-                                },
-                            }}
-                        />
+                        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="pt-br">
+                            <DatePicker
+                                label="Data de Defesa"
+                                value={filters.defense_date ? dayjs(filters.defense_date) : null}
+                                onChange={handleDateChange}
+                                slotProps={{
+                                    textField: {
+                                        fullWidth: true,
+                                        size: "small",
+                                        sx: {
+                                            '& .MuiOutlinedInput-root': {
+                                                backgroundColor: colors.bg.elevated,
+                                                '& fieldset': { borderColor: colors.border.default },
+                                                '&:hover fieldset': { borderColor: colors.border.focus },
+                                            },
+                                            '& .MuiInputLabel-root': {
+                                                color: colors.text.secondary,
+                                            },
+                                        }
+                                    }
+                                }}
+                            />
+                        </LocalizationProvider>
                     </Grid>
 
                     <Grid size={12}>
@@ -281,7 +290,9 @@ const FilterModal: React.FC<FilterModalProps> = ({
                     variant="contained"
                     sx={{
                         backgroundColor: colors.action.primary,
+                        boxShadow: 'none',
                         '&:hover': {
+                            boxShadow: 'none',
                             backgroundColor: colors.action.hover,
                         }
                     }}

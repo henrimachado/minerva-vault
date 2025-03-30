@@ -23,10 +23,18 @@ colors: {
     active: '#0d47a1',
   },
   feedback: {
-    error: '#ff5252',
-    success: '#4caf50',
-    warning: '#ff9800',
+    error: '#FF0051',
+    errorDark: '#E00047',
+    success: '#00D8B1',
+    successDark: '##0DB99A',
+    warning: '#F49200',
+    warningDark: '##E77B00',
     info: '#2196f3'
+  },
+  status: {
+    pending: '#F49200',
+    approved: '#00D8B1',
+    rejected: '#FF0051',
   }
 },
 typography: {

@@ -272,7 +272,7 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
             <DialogTitle sx={{ color: colors.text.primary, pb: 1 }}>
                 <Box display="flex" justifyContent="space-between" alignItems="center">
                     <Typography variant="h5" component="div" sx={{ fontWeight: 600 }}>
-                        Cadastrar Nova Monografia
+                        Cadastrar nova monografia
                     </Typography>
                     {!loading && (
                         <IconButton onClick={handleCloseModal} size="small">
@@ -582,8 +582,10 @@ const CreateThesisModal: React.FC<CreateThesisModalProps> = ({
                         disabled={loading}
                         sx={{
                             backgroundColor: colors.action.primary,
+                            boxShadow: 'none',
                             '&:hover': {
                                 backgroundColor: colors.action.hover,
+                                boxShadow: 'none',
                             }
                         }}
                     >

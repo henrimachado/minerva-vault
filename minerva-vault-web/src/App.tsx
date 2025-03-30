@@ -8,6 +8,7 @@ import { NotificationProvider } from "./shared/contexts/NotificationContext";
 import Navbar from "./shared/components/Navbar/Navbar";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import PasswordChangeObserver from "./shared/components/PasswordChangeObserver/PasswordChangeObserver";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <AuthProvider>
+              <PasswordChangeObserver />
               <Box sx={{ px: { xs: 2, sm: 4, md: 6, lg: 8 } }}>
                 <Navbar />
                 <AppRoutes />
