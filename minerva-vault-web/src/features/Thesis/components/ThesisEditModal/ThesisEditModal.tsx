@@ -553,7 +553,7 @@ const ThesisEditModal: React.FC<ThesisEditModalProps> = ({
                                 <Chip
                                     label={getStatusLabel(originalThesis.status)}
                                     color={getStatusColor(originalThesis.status) as any}
-                                    sx={{ fontWeight: 500 }}
+                                    sx={{ fontWeight: 500}}
                                 />
                             </Box>
 

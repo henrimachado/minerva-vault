@@ -45,6 +45,7 @@ function SignUp() {
     const navigate = useNavigate();
     const { getUserRoles, createUser } = UserController();
     const [loading, setLoading] = useState(false);
+    const [isConverting, setIsConverting] = useState(false);
     const [roles, setRoles] = useState<UserRole[]>([]);
     const [rolesLoading, setRolesLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -64,6 +65,80 @@ function SignUp() {
     });
 
     const [errors, setErrors] = useState<FormErrors>({});
+
+    // Function to convert PNG to JPEG
+    const convertPngToJpeg = async (file: File): Promise<File> => {
+        // If not PNG, return original file
+        if (!file.type.includes('png')) {
+            return file;
+        }
+
+        setIsConverting(true);
+
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (!event.target?.result) {
+                    setIsConverting(false);
+                    reject(new Error("Failed to read file"));
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    // Create canvas
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    // Draw image with white background (to handle transparency)
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        setIsConverting(false);
+                        reject(new Error("Failed to get canvas context"));
+                        return;
+                    }
+
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert to JPEG blob
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            setIsConverting(false);
+                            reject(new Error("Failed to create blob"));
+                            return;
+                        }
+
+                        // Create new file with .jpg extension
+                        const newFileName = file.name.replace(/\.png$/i, '.jpg');
+                        const jpegFile = new File([blob], newFileName, {
+                            type: 'image/jpeg',
+                            lastModified: file.lastModified
+                        });
+
+                        setIsConverting(false);
+                        resolve(jpegFile);
+                    }, 'image/jpeg', 0.9); // 0.9 quality (90%)
+                };
+
+                img.onerror = () => {
+                    setIsConverting(false);
+                    reject(new Error("Failed to load image"));
+                };
+
+                img.src = event.target.result as string;
+            };
+
+            reader.onerror = () => {
+                setIsConverting(false);
+                reject(new Error("Failed to read file"));
+            };
+
+            reader.readAsDataURL(file);
+        });
+    };
 
     const fetchRoles = async () => {
         setRolesLoading(true);
@@ -93,12 +168,13 @@ function SignUp() {
         }
     };
 
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+            let file = e.target.files[0];
 
-            if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-                setErrors({ ...errors, avatar: 'Formato de imagem inválido. Use JPG, PNG ou GIF.' });
+            // Only accept PNG and JPEG/JPG
+            if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
+                setErrors({ ...errors, avatar: 'Formato de imagem inválido. Use apenas JPG ou PNG.' });
                 return;
             }
 
@@ -107,9 +183,21 @@ function SignUp() {
                 return;
             }
 
-            setFormData({ ...formData, avatar: file });
-            setAvatarPreview(URL.createObjectURL(file));
-            setErrors({ ...errors, avatar: undefined });
+            try {
+                // Convert PNG to JPEG if needed
+                if (file.type === 'image/png') {
+                    console.log("Converting PNG to JPEG...");
+                    file = await convertPngToJpeg(file);
+                    console.log("Conversion complete:", file.type, file.name);
+                }
+
+                setFormData({ ...formData, avatar: file });
+                setAvatarPreview(URL.createObjectURL(file));
+                setErrors({ ...errors, avatar: undefined });
+            } catch (error) {
+                console.error("Error converting image:", error);
+                setErrors({ ...errors, avatar: 'Erro ao processar a imagem. Tente outro arquivo.' });
+            }
         }
     };
 
@@ -243,17 +331,17 @@ function SignUp() {
                             sx={{
                                 width: 80,
                                 height: 80,
-                                cursor: 'pointer',
+                                cursor: isConverting ? 'wait' : 'pointer',
                                 bgcolor: tokens.colors.bg.secondary,
                                 border: `2px solid ${tokens.colors.border.default}`,
-                                '&:hover': { opacity: 0.8 }
+                                '&:hover': { opacity: isConverting ? 1 : 0.8 }
                             }}
-                            onClick={triggerFileInput}
+                            onClick={isConverting ? undefined : triggerFileInput}
                         >
                             {!avatarPreview && <CameraAltIcon sx={{ fontSize: 40 }} />}
                         </Avatar>
 
-                        {!avatarPreview && (
+                        {!avatarPreview && !isConverting && (
                             <Box
                                 sx={{
                                     position: 'absolute',
@@ -278,7 +366,7 @@ function SignUp() {
                             </Box>
                         )}
 
-                        {avatarPreview && (
+                        {avatarPreview && !isConverting && (
                             <IconButton
                                 size="small"
                                 sx={{
@@ -302,16 +390,46 @@ function SignUp() {
                             </IconButton>
                         )}
 
+                        {isConverting && (
+                            <Box
+                                sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center',
+                                    backgroundColor: 'rgba(0,0,0,0.5)',
+                                    borderRadius: '50%',
+                                }}
+                            >
+                                <CircularProgress size={30} sx={{ color: tokens.colors.text.primary }} />
+                            </Box>
+                        )}
+
                         <input
-                            accept="image/*"
+                            accept="image/jpeg,image/jpg,image/png"
                             style={{ display: 'none' }}
                             id="avatar-upload"
                             type="file"
                             onChange={handleAvatarChange}
-                            disabled={loading}
+                            disabled={loading || isConverting}
                         />
                     </Box>
                 </Box>
+
+                {isConverting && (
+                    <Typography
+                        variant="caption"
+                        align="center"
+                        color={tokens.colors.text.secondary}
+                        sx={{ display: 'block', mb: 1 }}
+                    >
+                        Convertendo imagem...
+                    </Typography>
+                )}
 
                 {errors.avatar && (
                     <Typography
@@ -488,7 +606,7 @@ function SignUp() {
                             <FormControl
                                 fullWidth
                                 error={!!errors.role_id}
-                                disabled={loading || rolesLoading}
+                                disabled={loading || rolesLoading || isConverting}
                                 sx={{
                                     mt: 0.25,
                                     '& .MuiOutlinedInput-root': {
@@ -548,9 +666,9 @@ function SignUp() {
                             textTransform: 'none',
                             boxShadow: 'none',
                         }}
-                        disabled={loading}
+                        disabled={loading || isConverting}
                     >
-                        {loading ? <CircularProgress size={20} /> : "Cadastrar"}
+                        {loading || isConverting ? <CircularProgress size={20} /> : "Cadastrar"}
                     </Button>
 
                     <Box sx={{ textAlign: 'center' }}>

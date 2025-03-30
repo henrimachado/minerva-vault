@@ -11,8 +11,11 @@ import {
   Fade,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import SchoolIcon from "@mui/icons-material/School";
 import { tokens } from "../../../theme/theme";
+// Import SVG assets
+import minervaIcon from "../../../assets/minerva-icon.svg";
+import minervaText from "../../../assets/minerva-text.svg";
+
 
 const HomePage = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -51,31 +54,32 @@ const HomePage = () => {
             <Box
               sx={{
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 mb: 4,
               }}
             >
-              <SchoolIcon
+              <Box
+                component="img"
+                src={minervaIcon}
+                alt="Minerva's Vault Icon"
                 sx={{
-                  fontSize: { xs: 40, sm: 50, md: 60 },
-                  color: tokens.colors.action.primary,
-                  mr: 2,
+                  width: { xs: 100, sm: 120, md: 140 },
+                  height: "auto",
+                  mb: 2,
                 }}
               />
-              <Typography
-                variant="h2"
-                component="h1"
+
+              <Box
+                component="img"
+                src={minervaText}
+                alt="Minerva's Vault Text"
+
                 sx={{
-                  fontWeight: 700,
-                  fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-                  background: `linear-gradient(90deg, ${tokens.colors.text.primary} 0%, ${tokens.colors.action.primary} 100%)`,
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  letterSpacing: "-0.025em",
+                  width: { xs: 200, sm: 240, md: 280 },
+                  height: "auto",
                 }}
-              >
-                Minerva's Vault
-              </Typography>
+              />
             </Box>
 
             <Typography

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import {
     AppBar,
     Toolbar,
-    Typography,
     Button,
     Avatar,
     Box,
@@ -10,12 +9,15 @@ import {
     MenuItem,
     IconButton,
     Divider,
+    Typography,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
 import { useAuth } from "../../contexts/AuthContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { tokens } from "../../../theme/theme";
 import AuthController from "../../../features/Auth/controller/AuthController";
+// Import SVG text logo
+import minervaText from '../../../assets/minerva-text.svg';
 
 const Navbar: React.FC = () => {
     const { user, isAuthenticated, clearUser } = useAuth();
@@ -85,18 +87,26 @@ const Navbar: React.FC = () => {
             }}
         >
             <Toolbar sx={{ justifyContent: "space-between", py: 2, px: 0 }}>
-                <Typography
-                    variant="h5"
+                {/* Replace text with SVG logo */}
+                <Box
                     component={Link}
                     to="/"
                     sx={{
                         textDecoration: "none",
-                        color: colors.text.primary,
-                        fontWeight: "bold",
+                        display: "flex",
+                        alignItems: "center",
                     }}
                 >
-                    Minerva's Vault
-                </Typography>
+                    <Box
+                        component="img"
+                        src={minervaText}
+                        alt="Minerva's Vault"
+                        sx={{
+                            height: 16,
+                            width: "auto",
+                        }}
+                    />
+                </Box>
 
                 <Box display="flex" alignItems="center">
                     {isAuthRoute ? (

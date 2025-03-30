@@ -45,6 +45,7 @@ function UserProfilePage() {
     const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
     const [avatarFile, setAvatarFile] = useState<File | null>(null);
     const [avatarDeleted, setAvatarDeleted] = useState(false);
+    const [isConverting, setIsConverting] = useState(false);
 
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -54,6 +55,79 @@ function UserProfilePage() {
 
     const [changePasswordModal, setChangePasswordModal] = useState(false);
 
+    // Function to convert PNG to JPEG
+    const convertPngToJpeg = async (file: File): Promise<File> => {
+        // If not PNG, return original file
+        if (!file.type.includes('png')) {
+            return file;
+        }
+
+        setIsConverting(true);
+
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                if (!event.target?.result) {
+                    setIsConverting(false);
+                    reject(new Error("Failed to read file"));
+                    return;
+                }
+
+                const img = new Image();
+                img.onload = () => {
+                    // Create canvas
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+
+                    // Draw image with white background (to handle transparency)
+                    const ctx = canvas.getContext('2d');
+                    if (!ctx) {
+                        setIsConverting(false);
+                        reject(new Error("Failed to get canvas context"));
+                        return;
+                    }
+
+                    ctx.fillStyle = '#FFFFFF';
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.drawImage(img, 0, 0);
+
+                    // Convert to JPEG blob
+                    canvas.toBlob((blob) => {
+                        if (!blob) {
+                            setIsConverting(false);
+                            reject(new Error("Failed to create blob"));
+                            return;
+                        }
+
+                        // Create new file with .jpg extension
+                        const newFileName = file.name.replace(/\.png$/i, '.jpg');
+                        const jpegFile = new File([blob], newFileName, {
+                            type: 'image/jpeg',
+                            lastModified: file.lastModified
+                        });
+
+                        setIsConverting(false);
+                        resolve(jpegFile);
+                    }, 'image/jpeg', 0.9); // 0.9 quality (90%)
+                };
+
+                img.onerror = () => {
+                    setIsConverting(false);
+                    reject(new Error("Failed to load image"));
+                };
+
+                img.src = event.target.result as string;
+            };
+
+            reader.onerror = () => {
+                setIsConverting(false);
+                reject(new Error("Failed to read file"));
+            };
+
+            reader.readAsDataURL(file);
+        });
+    };
 
     useEffect(() => {
         if (user) {
@@ -111,12 +185,14 @@ function UserProfilePage() {
         }
     };
 
-    const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    // Modified to convert PNG files to JPEG and restrict to only PNG/JPEG
+    const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
-            const file = e.target.files[0];
+            let file = e.target.files[0];
 
-            if (!file.type.match(/image\/(jpeg|jpg|png|gif)/)) {
-                setErrors({ ...errors, avatar: 'Formato de imagem inválido. Use JPG, PNG ou GIF.' });
+            // Only accept PNG and JPEG/JPG
+            if (!file.type.match(/image\/(jpeg|jpg|png)/)) {
+                setErrors({ ...errors, avatar: 'Formato de imagem inválido. Use apenas JPG ou PNG.' });
                 return;
             }
 
@@ -125,10 +201,22 @@ function UserProfilePage() {
                 return;
             }
 
-            setAvatarFile(file);
-            setAvatarPreview(URL.createObjectURL(file));
-            setAvatarDeleted(false);
-            setErrors({ ...errors, avatar: undefined });
+            try {
+                // Convert PNG to JPEG if needed
+                if (file.type === 'image/png') {
+                    console.log("Converting PNG to JPEG...");
+                    file = await convertPngToJpeg(file);
+                    console.log("Conversion complete:", file.type, file.name);
+                }
+
+                setAvatarFile(file);
+                setAvatarPreview(URL.createObjectURL(file));
+                setAvatarDeleted(false);
+                setErrors({ ...errors, avatar: undefined });
+            } catch (error) {
+                console.error("Error converting image:", error);
+                setErrors({ ...errors, avatar: 'Erro ao processar a imagem. Tente outro arquivo.' });
+            }
         }
     };
 
@@ -156,6 +244,7 @@ function UserProfilePage() {
         setErrors(newErrors);
         return Object.keys(newErrors).length === 0;
     };
+
     const handleSaveChanges = async () => {
         if (!user) return;
 
@@ -184,7 +273,6 @@ function UserProfilePage() {
 
         try {
             await updateUser(updatedData, user.id);
-
 
             setIsPageLoading(true);
 
@@ -280,19 +368,19 @@ function UserProfilePage() {
                             color="error"
                             startIcon={<CancelIcon />}
                             onClick={toggleEditMode}
-                            disabled={isSaving}
+                            disabled={isSaving || isConverting}
                         >
                             Cancelar
                         </Button>
                         <Button
                             variant="contained"
                             color="primary"
-                            startIcon={isSaving ? null : <SaveIcon />}
+                            startIcon={isSaving || isConverting ? null : <SaveIcon />}
                             onClick={handleSaveChanges}
-                            disabled={!hasChanges || isSaving}
+                            disabled={!hasChanges || isSaving || isConverting}
                             sx={{ minWidth: '120px' }}
                         >
-                            {isSaving ? <CircularProgress size={24} color="inherit" /> : "Salvar"}
+                            {isSaving || isConverting ? <CircularProgress size={24} color="inherit" /> : "Salvar"}
                         </Button>
                     </Box>
                 )}
@@ -322,9 +410,9 @@ function UserProfilePage() {
                                     height: 120,
                                     border: `3px solid ${tokens.colors.border.default}`,
                                     backgroundColor: tokens.colors.bg.elevated,
-                                    cursor: isEditing && !isSaving ? 'pointer' : 'default',
+                                    cursor: isEditing && !isSaving && !isConverting ? 'pointer' : 'default',
                                 }}
-                                onClick={isEditing && !isSaving ? () => fileInputRef.current?.click() : undefined}
+                                onClick={isEditing && !isSaving && !isConverting ? () => fileInputRef.current?.click() : undefined}
                             >
                                 {!avatarPreview && (
                                     user.first_name && user.last_name
@@ -338,9 +426,9 @@ function UserProfilePage() {
                                     type="file"
                                     ref={fileInputRef}
                                     style={{ display: 'none' }}
-                                    accept="image/*"
+                                    accept="image/jpeg,image/jpg,image/png"
                                     onChange={handleAvatarChange}
-                                    disabled={!isEditing || isSaving}
+                                    disabled={!isEditing || isSaving || isConverting}
                                 />
 
                                 {isEditing && (
@@ -355,7 +443,7 @@ function UserProfilePage() {
                                                 },
                                             }}
                                             onClick={() => fileInputRef.current?.click()}
-                                            disabled={isSaving}
+                                            disabled={isSaving || isConverting}
                                         >
                                             <CameraAltIcon fontSize="small" />
                                         </IconButton>
@@ -371,7 +459,7 @@ function UserProfilePage() {
                                                     },
                                                 }}
                                                 onClick={handleRemoveAvatar}
-                                                disabled={isSaving}
+                                                disabled={isSaving || isConverting}
                                             >
                                                 <DeleteIcon fontSize="small" />
                                             </IconButton>
@@ -380,6 +468,17 @@ function UserProfilePage() {
                                 )}
                             </Box>
                         </Box>
+
+                        {isConverting && (
+                            <Typography
+                                variant="caption"
+                                align="center"
+                                color={tokens.colors.text.secondary}
+                                sx={{ display: 'block', mt: 1 }}
+                            >
+                                Convertendo imagem...
+                            </Typography>
+                        )}
 
                         {errors.avatar && (
                             <Typography
@@ -448,7 +547,6 @@ function UserProfilePage() {
                     <Grid size={12}>
                         <Divider sx={{ my: 1, backgroundColor: tokens.colors.border.default }} />
                     </Grid>
-
 
                     <Grid size={6}>
                         <Typography variant="subtitle2" color={tokens.colors.text.secondary}>
@@ -538,7 +636,6 @@ function UserProfilePage() {
                     </Grid>
                 </Grid>
             </Paper>
-
 
             <Paper sx={{ p: 3, backgroundColor: tokens.colors.bg.secondary }}>
                 <Typography variant="h6" sx={{ mb: 2 }}>
