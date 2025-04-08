@@ -13,12 +13,11 @@ services:
     depends_on:
       - db
     environment:
-      - DJANGO_SETTINGS_MODULE=core.settings
-      - DATABASE_URL=postgresql://postgres:postgres@db:5432/minervavault
-      - DEBUG=1
-      - PYTHONDONTWRITEBYTECODE=1
-      - PYTHONUNBUFFERED=1
-
+      - DJANGO_SETTINGS_MODULE = ${DJANGO_SETTINGS_MODULE}
+      - DATABASE_URL = ${DATABASE_URL}
+      - DEBUG = ${DEBUG}
+      - PYTHONDONTWRITEBYTECODE = ${PYTHONDONTWRITEBYTECODE}
+      - PYTHONUNBUFFERED = ${PYTHONUNBUFFERED}
   web:
     build:
       context: .
@@ -29,7 +28,7 @@ services:
       - ./minerva-vault-web:/app
       - /app/node_modules
     environment:
-      - VITE_API_URL=http://localhost:8000
+      - VITE_API_URL=${VITE_API_URL}
 
   db:
     image: postgres:17.4-alpine
