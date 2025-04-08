@@ -253,8 +253,7 @@ class UserController(ViewSet):
                 'first_name': openapi.Schema(type=openapi.TYPE_STRING, max_length=150),
                 'last_name': openapi.Schema(type=openapi.TYPE_STRING, max_length=150),
                 'is_active': openapi.Schema(type=openapi.TYPE_BOOLEAN),
-                'avatar': openapi.Schema(type=openapi.TYPE_FILE),
-                'remove_avatar': openapi.Schema(type=openapi.TYPE_BOOLEAN)
+                'avatar': openapi.Schema(type=openapi.TYPE_FILE)
             }
         ),
         responses={
@@ -277,7 +276,6 @@ class UserController(ViewSet):
             401: "Não autorizado",
             403: "Sem permissão",
             404: "Usuário não encontrado",
-            409: 'Nome de usuário ou e-mail já cadastrado',
             500: "Erro interno do servidor"
         },
         tags=['Usuários']
@@ -320,7 +318,6 @@ class UserController(ViewSet):
             validated_data = validator.validated_data
             if 'is_active' not in original_fields and 'is_active' in validated_data:
                 validated_data.pop('is_active')
-            print(validator.validated_data)
             result = self.domain.update_user(
                 requesting_user=request.user,
                 user_id=str(pk),

@@ -87,7 +87,7 @@ class ThesisController(ViewSet):
                     }
                 )
             ),
-            400: "Requisição inválida",
+            400: "Dados inválidos",
             404: "Tese não encontrada",
             500: "Erro interno do servidor"
         },
@@ -125,13 +125,17 @@ class ThesisController(ViewSet):
         operation_summary="Lista as teses do usuário autenticado",
         operation_description="Retorna todas as teses associadas ao usuário logado",
         manual_parameters=[
-            openapi.Parameter(
-                'page',
-                openapi.IN_QUERY,
-                description="Número da página",
-                type=openapi.TYPE_INTEGER,
-                default=1
-            )
+            openapi.Parameter('title', openapi.IN_QUERY, type=openapi.TYPE_STRING, description="Filtrar por título"),
+            openapi.Parameter('author_name', openapi.IN_QUERY, type=openapi.TYPE_STRING, description="Filtrar por nome do autor"),
+            openapi.Parameter('advisor_name', openapi.IN_QUERY, type=openapi.TYPE_STRING, description="Filtrar por nome do orientador"),
+            openapi.Parameter('co_advisor_name', openapi.IN_QUERY, type=openapi.TYPE_STRING, description="Filtrar por nome do coorientador"),
+            openapi.Parameter('defense_date', openapi.IN_QUERY, type=openapi.TYPE_STRING, format=openapi.FORMAT_DATE, description="Filtrar por data de defesa"),
+            openapi.Parameter('context', openapi.IN_QUERY, type=openapi.TYPE_STRING, description="Busca por contexto em título, resumo e palavras-chave"),
+            openapi.Parameter('order_by', openapi.IN_QUERY, type=openapi.TYPE_STRING, 
+                            enum=['BYAUTHORDESC', 'BYAUTHORASC', 'BYADVISERDESC', 'BYADVISERASC', 
+                                'BYDEFENSEDATEDESC', 'BYDEFENSEDATEASC', 'BYTITLEASC', 'BYTITLEDESC'],
+                            description="Ordenação dos resultados"),
+            openapi.Parameter('page', openapi.IN_QUERY, type=openapi.TYPE_INTEGER, default=1, description="Número da página")
         ],
         responses={
             200: openapi.Response(
@@ -164,6 +168,7 @@ class ThesisController(ViewSet):
                     }
                 )
             ),
+            400: "Dados inválidos",
             401: "Não autorizado",
             500: "Erro interno do servidor"
         },
@@ -244,7 +249,7 @@ class ThesisController(ViewSet):
                     }
                 )
             ),
-            400: "Parâmetros inválidos",
+            400: "Dados inválidos",
             500: "Erro interno do servidor"
         },
         security=[],
@@ -450,7 +455,7 @@ class ThesisController(ViewSet):
         ],
         responses={
             204: "Tese removida com sucesso",
-            400: "ID inválido",
+            400: "Dados inválidos",
             401: "Não autorizado",
             403: "Sem permissão para remover a tese",
             404: "Tese não encontrada",
