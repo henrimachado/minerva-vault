@@ -1,6 +1,10 @@
 # MinervaVault
 Sistema de gerenciamento de monografias desenvolvido para o curso de Sistemas de Informação da UFVJM.
 
+## Responsáveis
+O sistema foi desenvolvido pelos alunos:
+- Mateus Henrique Machado
+- Raul Victor da Silva
 
 ## Pré-requisitos
 Para executar o sistema, você precisa apenas ter instalado:
