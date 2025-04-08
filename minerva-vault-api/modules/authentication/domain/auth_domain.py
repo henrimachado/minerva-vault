@@ -26,8 +26,3 @@ class AuthDomain:
             }
         }
     
-    # def refresh_token(self, data: dict) -> dict:
-    #     refresh_token = data.get('refresh')
-    #     if not refresh_token:
-    #         raise ValidationError('Token de atualização não fornecido')
-    #     return self.service.refresh_token(refresh_token)

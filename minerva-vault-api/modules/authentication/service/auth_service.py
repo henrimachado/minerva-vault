@@ -15,11 +15,3 @@ class AuthService:
             
         return user
     
-    # def refresh_token(self, refresh_token: str) -> dict:
-    #     try:
-    #         token = RefreshToken(refresh_token)
-    #         return {
-    #             'access': str(token.access_token)
-    #         }
-    #     except Exception as e:
-    #         raise AuthenticationFailed('Token inválido ou expirado')
