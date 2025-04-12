@@ -8,7 +8,8 @@ O sistema foi desenvolvido pelos alunos:
 
 ## Pré-requisitos
 Para executar o sistema, você precisa apenas ter instalado:
-- Docker `v. 4.38.0` ou mais 
+- Docker (app) `v. 4.38.0` ou mais 
+- Docker (engine) `v 27.5.1` ou mais 
 - Docker Compose `v2.32.4-desktop.1` ou mais 
 - Git `v 2.45.1` ou mais (caso pretenda cloná-lo )
 
